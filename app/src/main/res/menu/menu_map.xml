@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/menu_map_legend"
+        android:title="Legenda" />
+    <item android:id="@+id/menu_map_change_floor"
+        android:title="Cambia piano" />
+</menu>

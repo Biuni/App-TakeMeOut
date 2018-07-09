@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.widget.RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textViewCreateProfMail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Email"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:textColor="@color/colorBlack"
+                android:layout_marginTop="15sp"
+                android:layout_marginStart="15sp"
+                android:layout_marginEnd="15sp"
+                android:background="@color/colorLightBlue"/>
+
+            <EditText
+                android:id="@+id/editTextCreateProfMail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="15sp"
+                android:layout_marginStart="15sp"
+                android:ems="10"
+                android:inputType="textEmailAddress" />
+
+            <TextView
+                android:id="@+id/textViewCreateProfPassw"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Password"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:textColor="@color/colorBlack"
+                android:layout_marginTop="20sp"
+                android:layout_marginStart="15sp"
+                android:layout_marginEnd="15sp"
+                android:background="@color/colorLightBlue"/>
+
+            <EditText
+                android:id="@+id/editTextCreateProfPassw"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textPassword"
+                android:layout_marginStart="15sp"
+                android:layout_marginEnd="15sp"/>
+
+            <TextView
+                android:id="@+id/textViewCreateProfRepPassw"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ripeti Password"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:textColor="@color/colorBlack"
+                android:layout_marginTop="20sp"
+                android:layout_marginStart="15sp"
+                android:layout_marginEnd="15sp"
+                android:background="@color/colorLightBlue"/>
+
+            <EditText
+                android:id="@+id/editTextCreateProfRepPassw"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textPassword"
+                android:layout_marginStart="15sp"
+                android:layout_marginEnd="15sp"/>
+
+            <TextView
+                android:id="@+id/textViewCreateProfNameSurname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Nome utente"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:textColor="@color/colorBlack"
+                android:layout_marginTop="20sp"
+                android:layout_marginStart="15sp"
+                android:layout_marginEnd="15sp"
+                android:background="@color/colorLightBlue"/>
+
+            <EditText
+                android:id="@+id/editTextCreateProfNameSurname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:layout_marginStart="15sp"
+                android:layout_marginEnd="15sp"/>
+
+            <Button
+                android:id="@+id/buttonCreateProfSend"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Conferma"
+                android:layout_marginTop="30sp"
+                android:layout_marginStart="15sp"
+                android:layout_marginEnd="15sp"/>
+
+            <TextView
+                android:id="@+id/textViewCreateProfMandField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="* Tutti i campi sono obbligatori"
+                android:layout_marginTop="15sp"
+                android:layout_marginBottom="15sp"
+                android:layout_marginStart="15sp"
+                android:layout_marginEnd="15sp"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+</android.widget.RelativeLayout>

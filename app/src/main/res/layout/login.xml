@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.widget.LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="300dp"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/textViewLoginTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Login"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@color/colorBlack"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/textViewLoginMail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Email"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:textColor="@color/colorBlack"
+        android:background="@color/colorOrange"
+        android:layout_marginStart="10sp"
+        android:layout_marginEnd="10sp"/>
+    
+    <EditText
+        android:id="@+id/editTextLoginMail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10sp"
+        android:layout_marginEnd="10sp"/>
+
+    <TextView
+        android:id="@+id/textViewLoginPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="Password"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:textColor="@color/colorBlack"
+        android:background="@color/colorOrange"
+        android:layout_marginStart="10sp"
+        android:layout_marginEnd="10sp"/>
+
+    <EditText
+        android:id="@+id/editTextLoginPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:layout_marginStart="10sp"
+        android:layout_marginEnd="10sp"/>
+
+    <CheckBox
+        android:id="@+id/checkBoxLoginRemember"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:text="Resta connesso"
+        android:textSize="18sp"
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="60sp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayoutLoginButton"
+        android:layout_marginTop="30dp">
+
+        <Button
+            android:id="@+id/buttonLoginLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="Accedi"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/buttonLoginCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="Annulla"
+            android:textSize="18sp" />
+    </LinearLayout>
+</android.widget.LinearLayout>

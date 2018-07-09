@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.widget.LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="300dp"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/colorYellow"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/textViewLegend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Legenda"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@color/colorBlack"/>
+
+    <ImageView
+        android:id="@+id/imageViewLegend"
+        android:layout_width="match_parent"
+        android:layout_height="300sp"
+        android:layout_marginStart="20sp"
+        android:layout_marginEnd="20sp"
+        android:layout_marginTop="20sp"
+        android:layout_marginBottom="20sp"
+        android:src="@drawable/map_legend"
+        android:background="@color/colorOrange"/>
+
+    <Button
+        android:id="@+id/buttonLegendClose"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Chiudi"
+        android:textSize="18sp"/>
+
+</android.widget.LinearLayout>

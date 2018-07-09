@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.widget.LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="3">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@color/colorBlack">
+
+        <TextView
+            android:layout_width="65sp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.1"
+            android:text="Email"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:textColor="@color/colorBlack"
+            android:background="@color/colorLightBlue"
+            android:layout_marginBottom="1sp"
+            android:layout_marginEnd="1sp"/>
+
+        <TextView
+            android:id="@+id/textViewVProfMail"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0.9"
+            android:textSize="18sp"
+            android:text="abcd"
+            android:gravity="center"
+            android:background="@color/colorYellow"
+            android:layout_marginBottom="1sp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@color/colorBlack">
+
+        <TextView
+            android:layout_width="65sp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.1"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:text="Nome utente"
+            android:gravity="center"
+            android:textColor="@color/colorBlack"
+            android:background="@color/colorLightBlue"
+            android:layout_marginBottom="1sp"
+            android:layout_marginEnd="1sp"/>
+
+        <TextView
+            android:id="@+id/textViewVProfNameSurname"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0.9"
+            android:textSize="18sp"
+            android:text="abcd"
+            android:gravity="center"
+            android:background="@color/colorYellow"
+            android:layout_marginBottom="1sp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@color/colorBlack">
+
+        <TextView
+            android:layout_width="65sp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.1"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:text="Uuid"
+            android:gravity="center"
+            android:textColor="@color/colorBlack"
+            android:background="@color/colorLightBlue"
+            android:layout_marginBottom="1sp"
+            android:layout_marginEnd="1sp"/>
+
+        <TextView
+            android:id="@+id/textViewVProfUuid"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0.9"
+            android:textSize="18sp"
+            android:text="abcd"
+            android:gravity="center"
+            android:background="@color/colorYellow"
+            android:layout_marginBottom="1sp"/>
+    </LinearLayout>
+
+</android.widget.LinearLayout>

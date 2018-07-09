@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.widget.RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/textViewHomeUser"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/imageViewHomeUser"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="14dp"
+        android:text="Guest"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:visibility="visible"
+        android:enabled="false"
+        android:textColor="@color/colorBlack"/>
+
+    <ImageView
+        android:id="@+id/imageViewHomeUser"
+        android:layout_width="90sp"
+        android:layout_height="90sp"
+        android:layout_below="@+id/textViewHomeUser"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="22dp"
+        android:layout_toEndOf="@+id/buttonHomeMap"
+        android:enabled="false"
+        android:visibility="visible"
+        app:srcCompat="@drawable/home_user_no_logged" />
+
+    <Button
+        android:id="@+id/buttonHomeMap"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imageViewHomeLogo"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="48dp"
+        android:enabled="false"
+        android:text="Mappe"
+        android:textSize="18sp"
+        android:visibility="invisible" />
+
+    <Button
+        android:id="@+id/buttonHomeLoginLogout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/buttonHomeMap"
+        android:layout_below="@+id/buttonHomeMap"
+        android:layout_marginTop="25dp"
+        android:enabled="false"
+        android:text="Login"
+        android:textSize="18sp"
+        android:visibility="invisible" />
+
+    <Button
+        android:id="@+id/buttonHomeInscripViewProf"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imageViewHomeLoginLogout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp"
+        android:enabled="false"
+        android:text="Crea profilo"
+        android:textSize="18sp"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:id="@+id/imageViewHomeMap"
+        android:layout_width="40sp"
+        android:layout_height="40sp"
+        android:layout_alignParentStart="true"
+        android:layout_alignTop="@+id/buttonHomeMap"
+        android:layout_marginStart="52dp"
+        app:srcCompat="@drawable/home_map"
+        android:visibility="invisible"
+        android:enabled="false"/>
+
+    <ImageView
+        android:id="@+id/imageViewHomeLoginLogout"
+        android:layout_width="40sp"
+        android:layout_height="40sp"
+        android:layout_alignBottom="@+id/buttonHomeLoginLogout"
+        android:layout_alignEnd="@+id/imageViewHomeMap"
+        android:layout_alignStart="@+id/imageViewHomeMap"
+        android:layout_alignTop="@+id/buttonHomeLoginLogout"
+        app:srcCompat="@drawable/home_login_logout"
+        android:visibility="invisible"
+        android:enabled="false"/>
+
+    <ImageView
+        android:id="@+id/imageViewHomeInscripViewProf"
+        android:layout_width="40sp"
+        android:layout_height="40sp"
+        android:layout_alignStart="@+id/imageViewHomeLoginLogout"
+        android:layout_alignTop="@+id/buttonHomeInscripViewProf"
+        android:enabled="false"
+        android:visibility="invisible"
+        app:srcCompat="@drawable/home_create_profile" />
+
+    <ImageView
+        android:id="@+id/imageViewHomeLogo"
+        android:layout_width="175sp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignTop="@+id/textViewHomeUser"
+        android:layout_marginStart="24dp"
+        app:srcCompat="@drawable/takemeout" />
+
+    <ImageView
+        android:id="@+id/imageViewHomeNoEditSetting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/buttonHomeInscripViewProf"
+        android:layout_alignEnd="@+id/buttonHomeInscripViewProf"
+        android:layout_alignTop="@+id/buttonHomeMap"
+        android:layout_toEndOf="@+id/imageViewHomeMap"
+        app:srcCompat="@drawable/home_go_to_setting"
+        />
+
+
+</android.widget.RelativeLayout>
