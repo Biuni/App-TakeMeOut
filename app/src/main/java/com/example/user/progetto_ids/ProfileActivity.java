@@ -1,7 +1,5 @@
 package com.example.user.progetto_ids;
 
-import android.app.DatePickerDialog;
-import android.app.DatePickerDialog.OnDateSetListener;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -9,12 +7,9 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Calendar;
 import java.util.HashMap;
 
 import app_library.MainApplication;
@@ -26,15 +21,23 @@ import app_library.validation.FormControl;
  * Created by User on 23/06/2018.
  */
 
+// activity per la creazione o visione del profilo
 public class ProfileActivity extends AppCompatActivity {
 
+    // hasmap con i riferimenti agli elementi grafici
     private HashMap<String,TextView> hashMapProfileField;
+
+    // dialog per mostrare gli errori all'utente
     private AlertDialog alertDialogMessage;
+
+    // button per confermare le modifiche
     private Button buttonSend;
 
+    // array per tenere conto dei campi vuoti o sbagliati
     private boolean[] arrayEmptyField;
     private boolean[] arrayErrorField;
 
+    // messaggi di informazione o errore mostrati all'utente
     public static final String[] USER_MESSAGE = {"Almeno un campo è vuoto", "Almeno un campo non è corretto", "Password non corrispondenti", "L'email è posseduta da un altro utente", "Errore nel recuperare le informazioni del profilo"};
     public static final String[] ERROR_FIELD_MESSAGE = {"Email non valida (Es. prova@prova.com)", "La password deve avere almeno 8 caratteri", "Il nome utente deve avere solo lettere e spazi"};
 
@@ -48,6 +51,7 @@ public class ProfileActivity extends AppCompatActivity {
         arrayEmptyField = new boolean[4];
         arrayErrorField = new boolean[4];
 
+        // inizialmente si mettono tutti i campi vuoti e nessun errore
         for (int i = 0; i < 4; i++)
         {
             arrayEmptyField[i] = true;
@@ -63,40 +67,60 @@ public class ProfileActivity extends AppCompatActivity {
 
         alertDialogMessage = builder.create();
 
+        // si recupera l'extra dell'intent per vedere la modalità del profilo (creazione o visione)
         String profileMode = getIntent().getStringExtra("profileMode");
 
+        // visione del profilo
         if (profileMode.equals(HomeActivity.STRING_BUTTON_VIEW_PROFILE))
         {
+            // impostazione del titolo dell'activity a vedi profilo
             getSupportActionBar().setTitle("Vedi profilo");
+
+            // recupero layout vedi profilo
             setContentView(R.layout.view_profile);
+
+            // inizializzazione hasmap elementi grafici per la visione
             initializeHashMapProfileField(profileMode);
+
+            // si mostrano le informazioni del profilo dell'utente nell'activity
             initializeViewProfileField();
         }
         // profileMode.equals(HomeActivity.STRING_BUTTON_CREATE_PROFILE)
+        // creazione del profilo
         else
         {
+            // impostazione del titolo dell'activity a crea profilo
             getSupportActionBar().setTitle("Crea profilo");
+
+            // recupero layout crea profilo
             setContentView(R.layout.create_profile);
+
+            // inizializzazione hasmap elementi grafici per la creazione
             initializeHashMapProfileField(profileMode);
+
+            // si avviano i controlli sui campi inserity nell'activity
             startControlProfileFieldCreate();
         }
     }
 
     protected void onStart() {
         super.onStart();
-        MainApplication.setCurrentActivity(this);
 
-        /*if(!MainApplication.controlBluetooth())
-            MainApplication.activateBluetooth();*/
+        // si imposta l'activity corrente
+        MainApplication.setCurrentActivity(this);
     }
 
     protected void onResume() {
         super.onResume();
+
+        // activity visibile
         MainApplication.setVisible(true);
     }
 
     protected void onPause() {
         super.onPause();
+
+        // activity non visibile
         MainApplication.setVisible(false);
     }
 
@@ -109,8 +133,10 @@ public class ProfileActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+    // inizializzazione hasmap elementi grafici per la visione o la creazione del profilo in base al parametro di input
     private void initializeHashMapProfileField(String profileMode)
     {
+        // creazione del profilo
         if (profileMode.equals(HomeActivity.STRING_BUTTON_CREATE_PROFILE))
         {
             TextView textViewCurrent;
@@ -132,6 +158,7 @@ public class ProfileActivity extends AppCompatActivity {
             buttonSend = (Button) findViewById(R.id.buttonCreateProfSend);
         }
         // profileMode.equals(HomeActivity.STRING_BUTTON_VIEW_PROFILE)
+        // visione del profilo
         else
         {
             TextView textViewCurrent;
@@ -148,12 +175,19 @@ public class ProfileActivity extends AppCompatActivity {
 
     }
 
+    // metodo per avviare i controlli sui campi inserity nell'activity
     private void startControlProfileFieldCreate()
     {
+        // colore per campo vuoto
         final int colorEmpty = Color.rgb(230,230,230);
+
+        // colore per campo sbagliato
         final int colorError = Color.RED;
+
+        // colore per campo corretto
         final int colorCorrect = Color.GREEN;
 
+        // al cambio di focus sul campo mail si controlla se il campo è vuoto, sbagliato o corretto mostrando il risultato all'utente
         hashMapProfileField.get("mail").setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -182,6 +216,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
+        // al cambio di focus sul campo password si controlla se il campo è vuoto, sbagliato o corretto mostrando il risultato all'utente
         hashMapProfileField.get("password").setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -210,6 +245,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
+        // al cambio di focus sul campo ripeti password si controlla se il campo è vuoto, sbagliato o corretto mostrando il risultato all'utente
         hashMapProfileField.get("password_repeat").setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -238,6 +274,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
+        // al cambio di focus sul campo nome utente si controlla se il campo è vuoto, sbagliato o corretto mostrando il risultato all'utente
         hashMapProfileField.get("name_surname").setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -268,6 +305,7 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
 
+        // evento che si attiva alla pressione del button conferma modifiche
         buttonSend.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
@@ -275,12 +313,14 @@ public class ProfileActivity extends AppCompatActivity {
                 buttonSend.setFocusableInTouchMode(true);
                 buttonSend.requestFocus();
 
+                // si va a creare il profilo
                 createProfile();
             }
         });
     }
 
 
+    // metodo per la creazione del profilo
     private void createProfile()
     {
         // booleano per campo non corretto
@@ -311,25 +351,32 @@ public class ProfileActivity extends AppCompatActivity {
             alertDialogMessage.setMessage(USER_MESSAGE[2]);
         }
 
+        // se uno dei controlli precedenti non è stato superato si mostra un messaggio all'utente
         if(wrongField)
             alertDialogMessage.show();
         else
         {
             HashMap<String, String> insertedData = new HashMap<>();
 
+            // si recuperano i dati inserity nei campi
             insertedData.put("mail", hashMapProfileField.get("mail").getText().toString());
             insertedData.put("pwd", hashMapProfileField.get("password").getText().toString());
             insertedData.put("name", hashMapProfileField.get("name_surname").getText().toString());
 
+            // invio della richiesta di registrazione al server
             String serverRegisterResponse = UserHandler.userRegister(insertedData);
 
+            // registrazione completata con successo
             if(serverRegisterResponse.equals("OK"))
             {
                 Toast.makeText(getApplicationContext(),"Creazione profilo completata",Toast.LENGTH_LONG).show();
+
+                // si chiude la schermata del profilo ritornando alla home
                 finish();
             }
             else
             {
+                // si mostra il messaggio di errore all'utente
                 alertDialogMessage.setMessage(USER_MESSAGE[3]);
                 alertDialogMessage.show();
             }
@@ -337,16 +384,20 @@ public class ProfileActivity extends AppCompatActivity {
 
     }
 
+    // si mostrano le informazioni del profilo dell'utente nell'activity di visione del profilo
     private void initializeViewProfileField()
     {
+        // invio della richiesta per ottenere le informazioni sul profilo al server
         UserProfile profile = UserHandler.getProfile(UserHandler.getUuid());
 
+        // informazioni recuperate con successo e vengono mostrate
         if (profile != null)
         {
             hashMapProfileField.get("mail").setText(profile.getMail());
             hashMapProfileField.get("name_surname").setText(profile.getNameSurname());
             hashMapProfileField.get("uuid").setText(profile.getUuid());
         }
+        // si mostra il messaggio di errore all'utente
         else
         {
             hashMapProfileField.get("mail").setText("");

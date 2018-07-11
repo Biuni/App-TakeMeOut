@@ -10,32 +10,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 
-/*import com.example.user.progetto_ids.FullScreenMap;
-import com.example.user.progetto_ids.Home;*/
-
 import com.example.user.progetto_ids.MapActivity;
 import com.example.user.progetto_ids.R;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import app_library.beacon.BeaconScanner;
-import app_library.comunication.ServerComunication;
 import app_library.maps.components.Node;
 import app_library.maps.components.Floor;
-import app_library.sharedstorage.Data;
 import app_library.user.UserHandler;
-import app_library.utility.CSVHandler;
 import static android.content.Context.NOTIFICATION_SERVICE;
 
 /**
- * Questa classe gestisce alcuni elementi riguarda la logica dell'applicazione.
+ * Questa classe è una classe di supporto che gestisce alcuni elementi riguarda la logica dell'applicazione.
  *
  */
 
@@ -63,6 +54,7 @@ public class MainApplication {
         //costante usata per attivare il bluetooth
     private static final int REQUEST_ENABLE_BT = 1;
 
+    // permette la ricezione di notifiche sul dispositivo
     private static NotificationManager notificationManager;
         //filtro usato per discriminare quali messaggi deve ricevere MainApplication
     private static IntentFilter intentFilter;
@@ -70,9 +62,6 @@ public class MainApplication {
     public static final String TERMINATED_SCAN = "TerminatedScan";
         //modalità di funzionamento dell'applicazione (per gestire le comunicazioni col server)
     private static boolean onlineMode = true;
-
-        //parametri per la durata dello scan (presi dal server)
-    //private static HashMap<String, Long> scanParameters;
 
         //flag che indica quando l'applicazione sta per essere chiusa (passando dal backbutton)
     private static boolean isFinishing;
@@ -84,7 +73,10 @@ public class MainApplication {
      */
     public static void start(Activity a) {
         activity = a;
+
+        // inizializzazione filtro messaggi BroadcastReceiver
         initializeFilter();
+
         emergency = false;
             //registrato il receiver
         activity.getBaseContext().registerReceiver(broadcastReceiver,intentFilter);
@@ -97,15 +89,7 @@ public class MainApplication {
             //inizializzata la struttura dati legata all'utente
         UserHandler.init();
 
-
-            //impostato l'indirizzo ip del server
-        //ServerComunication.setHostMaster(PreferenceManager.getDefaultSharedPreferences(activity.getBaseContext()).getString("serverIp",""));
-
-
-        //creata struttura dati legata ai nodi dell'edificio, leggendo dal file salvato in memoria intera
-        /*ArrayList<String[]> nodeList = CSVHandler.readCSV(CSVHandler.FILE_NODE, activity.getBaseContext());
-        loadNode(nodeList);*/
-
+        // inizializzazione della posizione dell'utente qualora l'utente sia online e loggato e ci sono informazioni sulla posizione
         if(MainApplication.getOnlineMode() && UserHandler.isLogged())
             UserHandler.initializePosition();
 
@@ -159,12 +143,7 @@ public class MainApplication {
         return visible;
     }
     /**
-     * Metodo che restituisce l'istanza contenente le durata per le varie fasi dello scan, ricevute dal server
-     * @return, hashmap (K: nome parametro, V:sua durata in millisecondi) contenente i valori per le varie fasi dello scan
-     */
-    /*public static HashMap<String,Long> getScanParameters() {
-        return scanParameters;
-    }*/
+
 
     /**
      * Metodo imposta l'attributo isFinishing, che indica se l'applicazione sta per essere chiusa
@@ -173,22 +152,6 @@ public class MainApplication {
     public static void setIsFinishing(boolean b) {
         isFinishing = b;
     }
-
-    /**
-     * Metodo che assegna l'istanza contenente le durata per le varie fasi dello scan, ricevute dal server
-     * @param s, hashmap (K: nome parametro, V:sua durata in millisecondi) contenente i valori per le varie fasi dello scan
-     */
-    /*public static void setScanParameters(HashMap<String,Long> s) {
-        scanParameters = s;
-    }*/
-
-    /**
-     * Metodo che restituisce la struttura dati in cui sono memorizzati i beacon
-     * @return, struttura dati contenente i beacon
-     */
-    /*public static HashMap<String,Node> getSensors() {
-        return sensors;
-    }*/
 
 
     /**
@@ -266,6 +229,8 @@ public class MainApplication {
 
         for (String[] currentNode : listNodeRead) {
 
+            // estratte le informazioni del nodo corrente
+            //[0]"codice della stanza";[1]"mac address del beacon";[2]"coordinata x sulla mappa";[3]"coordinata y sulla mappa";[4]"piano in cui si trova la stanza";[5]"larghezza della stanza"
             String roomCod = currentNode[0];
             String beaconId = currentNode[1];
             int[] coords = new int[2];
@@ -274,10 +239,10 @@ public class MainApplication {
             String altitude = currentNode[4];
             double width = Double.parseDouble(currentNode[5].replace(",","."));
 
-            //il piano esiste
+            //il piano esiste e si aggiunge la stanza
             if(floors.containsKey(altitude))
                 floors.get(altitude).addNode(roomCod, new Node(roomCod, beaconId, coords.clone(), altitude, width));
-            //aggiungo il nuovo piano
+            //aggiungo il nuovo piano e poi la stanza
             else
             {
                 floors.put(altitude, new Floor(altitude));
@@ -306,41 +271,6 @@ public class MainApplication {
     }
 
 
-    /*public static void closeApp(DeviceNotifReceiver httpServerThread) {
-
-        scanner.suspendScan();
-
-        if(MainApplication.getOnlineMode()) {
-
-            if (httpServerThread.status()) {
-                try {
-                    httpServerThread.closeConnection();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            try {
-                ServerComunication.deletePosition(UserHandler.getIpAddress());
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-        }
-    }*/
-
-
-    /*public static void closeApp() {
-
-        scanner.suspendScan();
-
-        if(MainApplication.getOnlineMode() && UserHandler.isLogged())
-            ServerComunication.deleteUserPositionWithData(UserHandler.getUuid());
-    }*/
-
-
         //il broadcast receiver deputato alla ricezione dei messaggi
     private static BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -352,13 +282,22 @@ public class MainApplication {
             //ha terminato il proprio ciclo di funzionamento, se ne può quindi far partire un altro
         if(intent.getAction().equals("TerminatedScan")) {
 
+            // l'applicazione si prepara ad essere chiusa
             if (isFinishing)
             {
-                if(broadcastReceiver!=null) activity.unregisterReceiver(broadcastReceiver);
+                try {
+                    if(broadcastReceiver!=null) activity.unregisterReceiver(broadcastReceiver);
+                }
+                catch (IllegalArgumentException e)
+                {
+
+                }
+
                 scanner.closeScan();
                 scanner = null;
                 activity.finish();
             }
+            // l'applicazione non si prepara ad essere chiusa
             else
             {
                 //viene gestito il cambio di activity nel caso in cui ci sia un'emergenza
@@ -369,16 +308,8 @@ public class MainApplication {
                     scanner.closeScan();
                     scanner = null;
 
-                    //presi i dati riferiti alla posizione per poter inizializzare l'activity Map
-                    String currPosFloorName = Data.getUserPosition().getFloor();
-                    String currPosRoomCod = Data.getUserPosition().getRoomCod();
-
-                    String mapExtraInformationCurrPos = currPosFloorName.concat(";").concat(currPosRoomCod);
-                    Log.i("mex", mapExtraInformationCurrPos);
-
                     // si apre la mappa
                     Intent intentMap = new Intent (context, MapActivity.class);
-                    intentMap.putExtra("map_info_curr_pos", mapExtraInformationCurrPos);
                     context.startActivity(intentMap);
                 }
                 //viene gestito il cambio di activity nel caso in cui non sia presente un'emergenza
@@ -390,14 +321,13 @@ public class MainApplication {
                     {
                         scanner.closeScan();
                         scanner = null;
-                        //viene inviato un messaggio per creare la FullScreenMap activity
+                        //viene inviato un messaggio per creare l'activity della mappa
                         context.sendBroadcast(new Intent("STARTMAPS"));
                     }
-                    //se lo scan sta lavorando in modalità diversa da NORMAL, significa che si trova nella
-                    //FullScreenMaps
+                    //se lo scan sta lavorando in modalità diversa da NORMAL, significa che si trova nell'activity della mappa
                     else
                     {
-                        //viene inviato il messaggio per chiudere la FullScreenMaps
+                        //viene inviato il messaggio per chiudere l'activity della mappa
                         context.sendBroadcast(new Intent("EXIT_MAPS"));
                         scanner.closeScan();
                         scanner = null;
@@ -431,51 +361,36 @@ public class MainApplication {
     }
 
 
-
-
-
-
-
-
     /**
      * Metodo per lanciare una notifica push, qualora l'applicazione sia in background nel momento
      * in cui sopraggiunge un'emergenza
      */
     public static void launchNotification() {
-            //activity creata al click della notifica
-        /*Intent intent = new Intent(activity, Home.class);
-        intent.putExtra("MESSAGE","EMERGENCY");
 
-        PendingIntent pIntent = PendingIntent.getActivity(activity, (int) System.currentTimeMillis(), intent, 0);*/
-            //creazione della notifica vera e propria
-        /*Notification n  = new Notification.Builder(activity)
-                .setContentTitle("Progetto Ingegneria")
+        // intent vuoto per non aprire nessun activity ma lanciare una semplice notifica
+        PendingIntent pIntent = PendingIntent.getActivity(activity, (int) System.currentTimeMillis(), new Intent(), PendingIntent.FLAG_UPDATE_CURRENT);
+
+        //creazione della notifica vera e propria
+        Notification n  = new Notification.Builder(activity)
+                .setContentTitle("TakeMeOut")
                 .setContentText("C'è un'emergenza")
-                .setSmallIcon(R.drawable.danger)
-                .setLargeIcon(BitmapFactory.decodeResource(activity.getResources(), R.drawable.danger))
+                .setSmallIcon(R.drawable.takemeout_notification)
+                .setLargeIcon(BitmapFactory.decodeResource(activity.getResources(), R.drawable.takemeout_notification))
                 .setContentIntent(pIntent)
-                .setAutoCancel(true)
-                .addAction(R.drawable.danger, "Open", pIntent).build();
+                .setAutoCancel(true).build();
 
-        notificationManager =
-                (NotificationManager) activity.getSystemService(NOTIFICATION_SERVICE);*/
+        notificationManager = (NotificationManager) activity.getSystemService(NOTIFICATION_SERVICE);
+
+        try {
             //lancio della notifica
-        //notificationManager.notify(0, n);
+            notificationManager.notify(0, n);
+        }
+        catch (Exception e)
+        {
+
+        }
     }
 
-
-
-
-
-
-
-    /**
-     * Metodo per cancellare eventuali notifiche rimaste sul dispositivo dell'utente, nonostante
-     * l'emergenza sia terminata
-     */
-    public static void deleteNotification() {
-        //if (notificationManager!=null) notificationManager.cancel(0);
-    }
 
     /**
      * Metodo all'interno del quale viene richiesta l'attivazione del bluetooth

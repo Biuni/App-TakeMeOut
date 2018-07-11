@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 public class SharedData {
 
+    // lista di listener
     protected ArrayList<DataListener> listeners = new ArrayList<DataListener>();
 
     public void addDataListener(DataListener listener) {

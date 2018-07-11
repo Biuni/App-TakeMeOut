@@ -21,19 +21,23 @@ import app_library.MainApplication;
  */
 
 /**
- * Classe che implementa le richieste HTTP (DELETE, GET, POST e PUT impacchettando eventuali messaggi come parametro)
+ * Classe che implementa le richieste HTTP (DELETE, GET, POST e PUT impacchettando eventuali messaggi come parametro) necessarie alla classe ServerComunication
  * L'url della risorsa sarà http://[ipserver]:3000/[uri della risorsa]
  */
 
 public class HttpRequest extends AsyncTask<String,Void,String> {
 
+    // posrta del server
     private static final String PORT = "3000";
 
+    // costanti per il tipo di richiesta
     public static final String DELETE_REQUEST = "DELETE";
     public static final String GET_REQUEST = "GET";
     public static final String POST_REQUEST = "POST";
     public static final String PUT_REQUEST = "PUT";
 
+    // metodo in background per l'esecuzione della richiesta al server
+    // in urls[0] vi è il tipo di richiesta, urls[1] vi è l'indirizzo ip del server, urls[2] vi è l'uri della risorsa, urls[3] ci sono eventuali argomenti della richiesta
     @Override
     protected String doInBackground(String... urls)
     {
@@ -41,15 +45,15 @@ public class HttpRequest extends AsyncTask<String,Void,String> {
         URL url = null;
         HttpURLConnection connection = null;
 
+        // costituzione url
         try {
-            //url = new URL("http://" + urls[1] + ":" + PORT + "/" + SERVER_ID + "/" + urls[2]);
-
             url = new URL("http://" + urls[1] + ":" + PORT + "/" + urls[2]);
             Log.i("URL","url: " + url.toString());
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
 
+        // apertura connessione
         try {
             connection = (HttpURLConnection) url.openConnection();
         }catch (SocketTimeoutException e1){
@@ -60,6 +64,7 @@ public class HttpRequest extends AsyncTask<String,Void,String> {
             e.printStackTrace();
         }
 
+        // richiesta delete
         if (urls[0].equals(HttpRequest.DELETE_REQUEST))
         {
             connection.setConnectTimeout(5000);
@@ -72,6 +77,7 @@ public class HttpRequest extends AsyncTask<String,Void,String> {
                 e.printStackTrace();
             }
 
+            // esecuzione delete
             try {
                 if (connection.getResponseCode() == 200) {
                     InputStreamReader is = new InputStreamReader(connection.getInputStream());
@@ -105,6 +111,7 @@ public class HttpRequest extends AsyncTask<String,Void,String> {
                 if (connection!=null) connection.disconnect();
             }
         }
+        // richiesta get
         else if (urls[0].equals(HttpRequest.GET_REQUEST))
         {
             connection.setConnectTimeout(2000);
@@ -115,6 +122,7 @@ public class HttpRequest extends AsyncTask<String,Void,String> {
                 e.printStackTrace();
             }
 
+            // esecuzione get
             try {
                 //se la comunicazione è andata a buon fine, il server risponderà con il codice 200, quindi potremmo
                 //prendere il messaggio di risposta e restituirlo come output
@@ -143,10 +151,12 @@ public class HttpRequest extends AsyncTask<String,Void,String> {
                 if (connection!=null) connection.disconnect();
             }
         }
+        // richiesta post
         else if (urls[0].equals(HttpRequest.POST_REQUEST))
         {
             connection.setConnectTimeout(5000);
 
+            // esecuzione post
             try {
 
                 connection.setDoOutput(true);   //abilita la scrittura
@@ -206,11 +216,12 @@ public class HttpRequest extends AsyncTask<String,Void,String> {
 
             }
         }
-        // PUT_REQUEST
+        // richiesta put
         else
         {
             connection.setConnectTimeout(5000);
 
+            // esecuzione put
             try {
 
                 connection.setDoOutput(true);   //abilita la scrittura

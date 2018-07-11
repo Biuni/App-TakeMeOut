@@ -1,7 +1,6 @@
 package app_library.beacon;
 
 import android.util.Log;
-import app_library.MainApplication;
 
 /**
     Classe utilizzata per gestire le modalità di scan per la ricerca di beacon
@@ -38,16 +37,6 @@ public class Setup {
      */
     public Setup() {
         state = normalCondition;
-
-        /*if (MainApplication.getOnlineMode() && MainApplication.getScanParameters()!=null) {
-            SCAN_PERIOD = MainApplication.getScanParameters().get("scanPeriodNormal");
-            STOP_PERIOD = MainApplication.getScanParameters().get("periodBetweenScanNormal");
-        }
-        else {
-            SCAN_PERIOD = scanPeriodNormal;
-            STOP_PERIOD = periodBetweenScanNormal;
-        }*/
-
         SCAN_PERIOD = scanPeriodNormal;
         STOP_PERIOD = periodBetweenScanNormal;
         analyzeBeacon = true;
@@ -61,45 +50,18 @@ public class Setup {
         switch (condition) {
             case ("NORMAL"):
                 state = normalCondition;
-                /*if (MainApplication.getOnlineMode() && MainApplication.getScanParameters()!=null) {
-                    SCAN_PERIOD = MainApplication.getScanParameters().get("scanPeriodNormal");
-                    STOP_PERIOD = MainApplication.getScanParameters().get("periodBetweenScanNormal");
-                }
-                else {
-                    SCAN_PERIOD = scanPeriodNormal;
-                    STOP_PERIOD = periodBetweenScanNormal;
-                }*/
-
                 SCAN_PERIOD = scanPeriodNormal;
                 STOP_PERIOD = periodBetweenScanNormal;
                 analyzeBeacon = true;
                 break;
             case ("EMERGENCY"):
                 state = emergencyCondition;
-                /*if (MainApplication.getOnlineMode() && MainApplication.getScanParameters()!=null) {
-                    SCAN_PERIOD = MainApplication.getScanParameters().get("scanPeriodEmergency");
-                    STOP_PERIOD = MainApplication.getScanParameters().get("periodBetweenScanEmergency");
-                }
-                else {
-                    SCAN_PERIOD = scanPeriodEmergency;
-                    STOP_PERIOD = periodBetweenScanEmergency;
-                }*/
-
                 SCAN_PERIOD = scanPeriodEmergency;
                 STOP_PERIOD = periodBetweenScanEmergency;
                 analyzeBeacon = false;
                 break;
             case ("SEARCHING"):
                 state = searchCondition;
-                /*if (MainApplication.getOnlineMode() && MainApplication.getScanParameters()!=null) {
-                    SCAN_PERIOD = MainApplication.getScanParameters().get("scanPeriodSearching");
-                    STOP_PERIOD = MainApplication.getScanParameters().get("periodBetweenScanSearching");
-                }
-                else {
-                    SCAN_PERIOD = scanPeriodSearching;
-                    STOP_PERIOD = periodBetweenScanSearching;
-                }*/
-
                 SCAN_PERIOD = scanPeriodSearching;
                 STOP_PERIOD = periodBetweenScanSearching;
                 analyzeBeacon = false;

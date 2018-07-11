@@ -7,11 +7,19 @@ package app_library.sharedstorage;
 
 public class UserPositions extends SharedData {
 
+    // coordinata x
     private int x;
+
+    // coordinata y
     private int y;
+
+    // nome del piano
     private String floor;
+
+    // codice della stanza
     private String roomCod;
 
+    // costruttore
     public UserPositions() {
         x=0;
         y=0;

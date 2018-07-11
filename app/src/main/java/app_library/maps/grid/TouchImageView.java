@@ -11,20 +11,21 @@ import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.support.v7.widget.AppCompatImageView;
 
-/**
- * Classe che permette all'activity FULLSCREENMAP di gestire le gesture di pitch e zoom
- */
 
+// Classe che permette di gestire le gesture di pitch e zoom nella mappa
 public class TouchImageView extends AppCompatImageView {
+
     Matrix matrix;
-    // We can be in one of these 3 states
+
+    // ci possono essere 3 stati
     static final int NONE = 0;
     static final int DRAG = 1;
     static final int ZOOM = 2;
 
+    // stato corrente
     int mode = NONE;
 
-    // Remember some things for zooming
+    // parametri per lo zoom
     PointF last = new PointF();
     PointF start = new PointF();
     float minScale = 1f;
@@ -44,6 +45,7 @@ public class TouchImageView extends AppCompatImageView {
 
     Context context;
 
+    // costruttori
     public TouchImageView(Context context) {
         super(context);
         sharedConstructing(context);
@@ -54,6 +56,7 @@ public class TouchImageView extends AppCompatImageView {
         sharedConstructing(context);
     }
 
+    // inizializzazione degli eventi toccando la mappa
     private void sharedConstructing(Context context) {
 
         super.setClickable(true);
@@ -79,6 +82,7 @@ public class TouchImageView extends AppCompatImageView {
 
                 PointF curr = new PointF(event.getX(), event.getY());
 
+                // si va a vedere il tipo di azione agendo opportunamente
                 switch (event.getAction()) {
 
                     case MotionEvent.ACTION_DOWN:
@@ -139,7 +143,7 @@ public class TouchImageView extends AppCompatImageView {
 
                 invalidate();
 
-                return true; // indicate event was handled
+                return true;
 
             }
 
@@ -152,6 +156,7 @@ public class TouchImageView extends AppCompatImageView {
 
     }
 
+    // inizializzazione degli eventi di zoom sulla mappa
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
 
         @Override
@@ -202,6 +207,7 @@ public class TouchImageView extends AppCompatImageView {
 
     }
 
+    // applicazione della translazione della matrice di pixel
     void fixTrans() {
 
         matrix.getValues(m);
@@ -220,8 +226,7 @@ public class TouchImageView extends AppCompatImageView {
 
     }
 
-
-
+    // si ottiene la translazione di default della matrice di pixel
     float getFixTrans(float trans, float viewSize, float contentSize) {
 
         float minTrans, maxTrans;
@@ -252,6 +257,7 @@ public class TouchImageView extends AppCompatImageView {
 
     }
 
+    // si ottiene la translazione di drag default della matrice di pixel
     float getFixDragTrans(float delta, float viewSize, float contentSize) {
 
         if (contentSize <= viewSize) {
@@ -264,6 +270,7 @@ public class TouchImageView extends AppCompatImageView {
 
     }
 
+    // evento attivato alla variazione dello stato attuale della mappa
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 
@@ -273,9 +280,7 @@ public class TouchImageView extends AppCompatImageView {
 
         viewHeight = MeasureSpec.getSize(heightMeasureSpec);
 
-        //
-        // Rescales image on rotation
-        //
+        // si riscala l'immagine alla rotazione
         if (oldMeasuredHeight == viewWidth && oldMeasuredHeight == viewHeight
 
                 || viewWidth == 0 || viewHeight == 0)
@@ -288,7 +293,7 @@ public class TouchImageView extends AppCompatImageView {
 
         if (saveScale == 1) {
 
-            //Fit to screen.
+            // adattamento allo schermo
 
             float scale;
 
@@ -312,7 +317,7 @@ public class TouchImageView extends AppCompatImageView {
 
             matrix.setScale(scale, scale);
 
-            // Center the image
+            // centrata l'immagine
 
             float redundantYSpace = (float) viewHeight - (scale * (float) bmHeight);
 

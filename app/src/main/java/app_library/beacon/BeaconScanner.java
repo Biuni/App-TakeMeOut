@@ -15,19 +15,14 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.ParcelUuid;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 import app_library.MainApplication;
 import app_library.comunication.ServerComunication;
-import app_library.comunication.Message;
 import app_library.maps.components.Floor;
 import app_library.maps.components.Node;
 import app_library.sharedstorage.Data;
@@ -272,6 +267,7 @@ public class BeaconScanner extends StateMachine implements DataListener {
     }
 
 
+    // metodo per passare allo stato successivo della macchina a stati
     protected int nextState() {
         int next;
         switch(currentState) {
@@ -306,6 +302,7 @@ public class BeaconScanner extends StateMachine implements DataListener {
     }
 
 
+    // metodo per l'esecuzione di uno stato
     protected void executeState() {
         Log.i("State","execute scan state " + getState());
         switch(currentState) {
@@ -485,6 +482,7 @@ public class BeaconScanner extends StateMachine implements DataListener {
 
     };
 
+    // metodo update del listener per l'aggiornamento della struttura dati condivisa alla scoperta di un beacon
     @Override
     public void update() {
 
@@ -495,6 +493,7 @@ public class BeaconScanner extends StateMachine implements DataListener {
 
         Iterator iteratorFloors = MainApplication.getFloors().entrySet().iterator();
 
+        // si cerca se il mac adress del beacon trovato è presente nel file dei nodi
         while (iteratorFloors.hasNext() && (nodeRoomBeacon == null))
         {
             Map.Entry pairFloor = (Map.Entry) iteratorFloors.next();
@@ -512,6 +511,7 @@ public class BeaconScanner extends StateMachine implements DataListener {
             }
         }
 
+        // mac adress beacon trovato e si aggiornano le informazioni sulla posizione dell'utente come x, y, mac adress beacon e stanza in cui si trova
         if (nodeRoomBeacon != null)
         {
             Log.e("get","coords " + nodeRoomBeacon.getCoords() + " floor " + nodeRoomBeacon.getAltitude() + " room code " + nodeRoomBeacon.getRoomCod());
@@ -521,124 +521,43 @@ public class BeaconScanner extends StateMachine implements DataListener {
             Data.getUserPosition().setRoomCod(nodeRoomBeacon.getRoomCod());
             Data.getUserPosition().setPosition(nodeRoomBeacon.getCoords());
 
+            String serverResponse = "";
+
+            // si invia la posizione dell'utente al server
             if(MainApplication.getOnlineMode() && UserHandler.isLogged())
-                ServerComunication.sendUserPositionWithData(UserHandler.getUuid(), beaconCod, "");
-        }
-    }
+                serverResponse = ServerComunication.sendUserPositionWithData(UserHandler.getUuid(), beaconCod, "no_data");
 
-    @Override
-    public void retrive() {
-
-    }
-
-
-    /**
-     Classe utilizzata per la gestione e l'interpretazione dei dispositivi rintracciati dallo scan
-     */
-
-    // Adapter per gestire i dispositivi identificati durante lo scanner.
-    public class BScanLeDeviceListAdapter {
-
-        //beacon più vicino all'utente
-        private BluetoothDevice currentBeacon;
-
-        private String TAG2 = "LeDeviceAdapter";
-        //Hashmap di dispositivi estratti dallo scan (K: potenza del segnali RSSI, dispositivo trovato dallo scan)
-        private TreeMap<Integer,BluetoothDevice> mLeDevices;
-
-        /**
-         * Costruisce l'adapter per identificare i dispositivi estratti dallo scan
-         */
-        public BScanLeDeviceListAdapter() {
-            super();
-            mLeDevices = new TreeMap<>(Collections.<Integer>reverseOrder());
-        }
-        /**
-         * Metodo per aggiungere un dispositivo alla lista di quelli trovati (solamente nel caso in cui non sia già presente)
-         */
-        public void addDevice(BluetoothDevice device, int rssi) {
-            if (!mLeDevices.containsValue(device)) {
-                mLeDevices.put(rssi,device);
-                Log.i(TAG2,"device: " + device.getAddress() + " rssi: " + rssi);
-            }
-        }
-
-        /**
-         * Metodo che calcola e restituisce il beacon più vicino fra quelli trovati
-         */
-        public BluetoothDevice selectedDevice() {
-
-            BluetoothDevice b = null;
-
-            Iterator it = mLeDevices.entrySet().iterator();
-
-            //scandisce la lista in base alla distanza rispetto all'utente, finchè non trova un beacon presente nel CSV o finchè
-            //non termina la lista
-            while (b==null && it.hasNext()) {
-
-                Map.Entry entry = (Map.Entry) it.next();
-                BluetoothDevice dev = (BluetoothDevice) entry.getValue();
-
-                Iterator iterator = MainApplication.getFloors().entrySet().iterator();
-                boolean beaconFound = false;
-
-                while (!beaconFound && iterator.hasNext())
+            // si controlla se nella risposta del server viene indicata se è presente un'emergenza
+            try
+            {
+                // è presente un'emergenza
+                if (serverResponse.equals("OK_emergency"))
                 {
-                    Map.Entry pair = (Map.Entry) iterator.next();
-
-                    ArrayList<String> listBeaconFloor = MainApplication.getFloors().get(pair.getKey().toString()).getListNameRoomOrBeacon(false);
-
-                    for (int i = 0; i < listBeaconFloor.size() && !beaconFound; i++)
+                    // si controlla se il bluetooth è attivo e ci sono informazioni sulla posizione corrente dell'utente
+                    if (MainApplication.controlBluetooth() && Data.getUserPosition().getFloor() != null)
                     {
-                        if (listBeaconFloor.get(i).equals(dev.getAddress()))
-                            beaconFound = true;
+                        // se non è già attiva un'emergenza
+                        if (!MainApplication.getEmergency())
+                        {
+                            // se l'applicazione è in primo piano si imposta il booleano per l'emergenza a vero per aprire la mappa a pieno schermo altrimenti si invia una notifica nel dispositivo
+                            if(MainApplication.getVisible())
+                                MainApplication.setEmergency(true);
+                            else
+                                MainApplication.launchNotification();
+                        }
                     }
                 }
-
-                //valuta se il beacon trovato è presente nella lista di quelli salvati nel CSV. Se si allora si è trovato il
-                //dispositivo più vicino
-                if(beaconFound) {
-                    b = dev;
-                }
-                else {
-                    Toast.makeText(MainApplication.getCurrentActivity().getApplicationContext(),
-                            " Si è individuato un sensore non presente nel documento, " +
-                                    " dovresti aggiornare il file", Toast.LENGTH_SHORT).show();
-                }
             }
+            catch (Exception e)
+            {
 
-            currentBeacon = b;
-            return b;
+            }
         }
+    }
 
-        /**
-         * Metodo che restituisce il beacon più vicino rispetto all'utente
-         * @return beacon più vicino rispetto all'utente
-         */
-        public BluetoothDevice getCurrentBeacon() {
-            return currentBeacon;
-        }
-        /**
-         * Metodo che setta il dispositivo più vicino
-         * @param b, dispositivo bluetooth da impostare con currentBeacon
-         */
-        public void setCurrentBeacon(BluetoothDevice b) {
-            currentBeacon = b;
-        }
-        /**
-         * Metodo cancella tutti i dispositivi trovati dalla lista
-         */
-        public void clear() {
-            mLeDevices.clear();
-        }
-
-        /**
-         * Metodo che restituisce il numero di dispositivi trovati
-         * @return numero di dispositivi trovati
-         */
-        public int getCount() {
-            return mLeDevices.size();
-        }
+    // metodo retrive del listener
+    @Override
+    public void retrive() {
 
     }
 }

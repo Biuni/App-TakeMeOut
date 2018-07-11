@@ -3,15 +3,12 @@ package app_library.utility;
 import android.content.Context;
 import android.util.Log;
 
-import com.example.user.progetto_ids.R;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -123,6 +120,7 @@ public class CSVHandler {
     }
 
 
+    // stampa del contenuto di un csv passato come parametro sul log
     public static void printCSV(ArrayList<String[]> s) {
         for (String[] str: s) {
             for (int i=0; i<str.length; i++) {
@@ -194,48 +192,4 @@ public class CSVHandler {
         Log.e("csv","bool" + b);
         return b;
     }
-
-
-    // permette la lettura di un file csv di dati presente nella cartella raw delle risorse dell'app
-    /*public static ArrayList<String[]> readCSVResourcesRaw(String fileName, Context context) {
-        creato lo stream per leggere il file
-        InputStream inputStream = null;
-
-        try {
-            si assegna allo stream il file da leggere
-            if (fileName.equals("beaconlist"))
-                inputStream = context.getResources().openRawResource(R.raw.beaconlist);
-            else if (fileName.equals("roomlist"))
-                inputStream = context.getResources().openRawResource(R.raw.roomlist);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        ArrayList<String[]> resultList = new ArrayList<>();
-        inizia la lettura effettiva del file
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-
-        try {
-            String csvLine;
-            per ogni riga del documento viene preso ogni elemenento che la compone
-            while ((csvLine = reader.readLine()) != null) {
-                String[] row = csvLine.split(";");
-                resultList.add(row);
-
-            }
-        }
-        catch (IOException ex) {
-            throw new RuntimeException("Error in reading CSV file: "+ex);
-        }
-        finally {
-            try {
-                inputStream.close();
-            }
-            catch (IOException e) {
-                throw new RuntimeException("Error while closing input stream: "+e);
-            }
-        }
-        return resultList;
-    }*/
 }

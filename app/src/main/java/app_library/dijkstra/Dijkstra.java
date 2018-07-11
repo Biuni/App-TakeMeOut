@@ -2,7 +2,6 @@ package app_library.dijkstra;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -14,8 +13,10 @@ import app_library.MainApplication;
  * Created by User on 05/07/2018.
  */
 
+// classe per l'esecuzione dell'algoritmo di Dijkstra
 public class Dijkstra {
 
+    // inizializzazione dei percorsi a partire dal nodo sorgente
     private static void initializePathsFromSource(Vertex source)
     {
         source.setMinDistance(0.);
@@ -41,26 +42,34 @@ public class Dijkstra {
         }
     }
 
+    // costruzione del percorso a costo minimo a partire dal nodo di destinazione e tornando ai nodi precedenti
     private static List<Vertex> computeShortestPathTo(Vertex target)
     {
         List<Vertex> path = new ArrayList<Vertex>();
+
+        // si prende il nodo precedente dal corrente costruendo il percorso
         for (Vertex vertex = target; vertex != null; vertex = vertex.getPrevious())
             path.add(vertex);
         Collections.reverse(path);
         return path;
     }
 
+    // calcolo del percorso a costo minimo a partire dal nodo sorgente al nodo di destinazione considerando tutti i nodi passati nel parametro array
     public static String[] getShortestPathFromTo(String sourceVertexName, String targetVertexName, Vertex[] vertexArray)
     {
+        // copia dell'array dei nodi di input
         Vertex[] vertexArrayCopy = vertexArray.clone();
 
-        //List<String> stringPathOutput = new ArrayList<>();
+        // percorso minimo di output
         String[] stringPathArrayOutput;
+
+        // indici array sorgente e destinazione non definiti
         int sourceVertexIndex = -1;
         int targetVertexIndex = -1;
 
         try
         {
+            // si trovano gli indici dell'array riferiti a sorgente e destinazione
             for (int i = 0; i < vertexArrayCopy.length && (sourceVertexIndex == -1 || targetVertexIndex == -1); i++)
             {
                 if (vertexArrayCopy[i].getName().equals(sourceVertexName))
@@ -70,14 +79,14 @@ public class Dijkstra {
                     targetVertexIndex = i;
             }
 
+            // inizializzazione dei percorsi a partire dal nodo sorgente
             initializePathsFromSource(vertexArrayCopy[sourceVertexIndex]);
 
+            // costruzione del percorso a partire dal nodo di destinazione e tornando ai nodi precedenti
             List<Vertex> vertexPath = computeShortestPathTo(vertexArrayCopy[targetVertexIndex]);
 
+            // costruzione dell'array del percorso minimo di output
             stringPathArrayOutput = new String[vertexPath.size()];
-
-            /*for (int i = 0; i < vertexPath.size(); i++)
-                stringPathOutput.add(vertexPath.get(i).getName());*/
 
             for (int i = 0; i < vertexPath.size(); i++)
                 stringPathArrayOutput[i] = vertexPath.get(i).getName();
@@ -91,16 +100,22 @@ public class Dijkstra {
         return stringPathArrayOutput;
     }
 
+    // calcolo del costo del percorso a costo minimo a partire dal nodo sorgente al nodo di destinazione considerando tutti i nodi passati nel parametro array
     public static double getDistanceShortestPathFromTo(String sourceVertexName, String targetVertexName, Vertex[] vertexArray)
     {
+        // copia dell'array dei nodi di input
         Vertex[] vertexArrayCopy = vertexArray.clone();
 
+        // distanza minima non definita
         double distancePathOutput = -1.0;
+
+        // indici array sorgente e destinazione non definiti
         int sourceVertexIndex = -1;
         int targetVertexIndex = -1;
 
         try
         {
+            // si trovano gli indici dell'array riferiti a sorgente e destinazione
             for (int i = 0; i < vertexArrayCopy.length && (sourceVertexIndex == -1 || targetVertexIndex == -1); i++)
             {
                 if (vertexArrayCopy[i].getName().equals(sourceVertexName))
@@ -110,7 +125,10 @@ public class Dijkstra {
                     targetVertexIndex = i;
             }
 
+            // inizializzazione dei percorsi a partire dal nodo sorgente
             initializePathsFromSource(vertexArrayCopy[sourceVertexIndex]);
+
+            // determinazione della distanza minima del percorso
             distancePathOutput = vertexArrayCopy[targetVertexIndex].getMinDistance();
         }
         catch (Exception e)
@@ -121,157 +139,61 @@ public class Dijkstra {
         return distancePathOutput;
     }
 
-    public static HashMap<String,Integer> getHashMapsNodeIndex()
+    // restituzione della lista contenente i nomi dei nodi ovvero delle stanze
+    public static ArrayList<String> getListNodeRoomName()
     {
-        HashMap<String,Integer> hashMapsNodeIndex = null;
+        // lista di output con i nomi delle stanze
+        ArrayList<String> listNodeRoomNameOutput = null;
 
         try
         {
-            hashMapsNodeIndex = new HashMap<>();
+            listNodeRoomNameOutput = new ArrayList<>();
             Iterator iterator = MainApplication.getFloors().entrySet().iterator();
-            int index = 0;
 
+            // si scorre l'hasmap dei piani della classe MainApplication costruendo la lista con i nomi delle stanze di output
             while (iterator.hasNext())
             {
                 Map.Entry pair = (Map.Entry) iterator.next();
 
-                ArrayList<String> listNameRoomCurrentFloor = MainApplication.getFloors().get(pair.getKey().toString()).getListNameRoomOrBeacon(true);
+                ArrayList<String> listNodeRoomNameCurrentFloor = MainApplication.getFloors().get(pair.getKey().toString()).getListNameRoomOrBeacon(true);
 
-                for (int i = 0; i < listNameRoomCurrentFloor.size(); i++)
+                for (int i = 0; i < listNodeRoomNameCurrentFloor.size(); i++)
                 {
-                    hashMapsNodeIndex.put(listNameRoomCurrentFloor.get(i), index);
-                    index++;
+                    listNodeRoomNameOutput.add(listNodeRoomNameCurrentFloor.get(i));
                 }
             }
         }
         catch (Exception e)
         {
-            hashMapsNodeIndex = null;
+            listNodeRoomNameOutput = null;
         }
 
-        return hashMapsNodeIndex;
+        return listNodeRoomNameOutput;
     }
 
 
-    // hashMapsNodeIndex contiene un'associazione codice_stanza-indice_array_nodi
-    public static String[] getShortestPathOfflineFromTo(String sourceVertexName, String targetVertexName, HashMap<String,Integer> hashMapsNodeIndex, ArrayList<String[]> listRouteData)
+    // calcolo del percorso a costo minimo a partire dal nodo sorgente al nodo di destinazione utilizzato per la modalità offline
+    public static String[] getShortestPathOfflineFromTo(String sourceVertexName, String targetVertexName, ArrayList<String> listNodeRoomNameOutput, ArrayList<String[]> listRouteData)
     {
-        /*Vertex v1 = new Vertex("150WC1");
-        Vertex v2 = new Vertex("150RAM");
-        Vertex v3 = new Vertex("150S1");
-        Vertex v4 = new Vertex("150R1");
-        Vertex v5 = new Vertex("150EMRL");
-
-        Vertex v6 = new Vertex("150BIB");
-        Vertex v7 = new Vertex("150A3");
-        Vertex v8 = new Vertex("150RL");
-
-
-
-        v1.adjacencies = new Edge[]{ new Edge(v2, 35.69)};
-        v2.adjacencies = new Edge[]{ new Edge(v6, 14.2496), new Edge(v3, 47.6839), new Edge(v1, 35.69)};
-        v3.adjacencies = new Edge[]{ new Edge(v4, 11.192), new Edge(v7, 47.83), new Edge(v2, 47.6839)};
-        v4.adjacencies = new Edge[]{ new Edge(v8, 34.57), new Edge(v5, 51.402), new Edge(v3, 11.192)};
-
-        v5.adjacencies = new Edge[]{ new Edge(v4, 51.402) };
-        v6.adjacencies = new Edge[]{ new Edge(v2, 14.2496) };
-        v7.adjacencies = new Edge[]{ new Edge(v3, 47.83)};
-        v8.adjacencies = new Edge[]{ new Edge(v4, 34.57) };
-
-        Dijkstra.computePaths(v1);
-        String outputMess = "Distanza: " + v5.minDistance;
-        outputMess += (" Percorso: " + Dijkstra.getShortestPathTo(v5));
-
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(outputMess).setCancelable(false).setTitle("Percorso").setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-
-            }
-        });
-
-        AlertDialog alertDialogMessage = builder.create();
-
-        alertDialogMessage.show();*/
-
-
-
-
-
-
-
-        /*List<Vertex> vertexList = new ArrayList<>();
-
-        vertexList.add(new Vertex("150WC1"));
-        vertexList.add(new Vertex("150RAM"));
-        vertexList.add(new Vertex("150S1"));
-        vertexList.add(new Vertex("150R1"));
-        vertexList.add(new Vertex("150EMRL"));
-
-        vertexList.add(new Vertex("150BIB"));
-        vertexList.add(new Vertex("150A3"));
-        vertexList.add(new Vertex("150RL"));
-
-
-
-        vertexList.get(0).setAdjacencies(new Edge[]{ new Edge(vertexList.get(1), 35.69)});
-        vertexList.get(1).setAdjacencies(new Edge[]{ new Edge(vertexList.get(5), 14.2496), new Edge(vertexList.get(2), 47.6839), new Edge(vertexList.get(0), 35.69)});
-        vertexList.get(2).setAdjacencies(new Edge[]{ new Edge(vertexList.get(3), 11.192), new Edge(vertexList.get(6), 47.83), new Edge(vertexList.get(1), 47.6839)});
-        vertexList.get(3).setAdjacencies(new Edge[]{ new Edge(vertexList.get(7), 34.57), new Edge(vertexList.get(4), 51.402), new Edge(vertexList.get(2), 11.192)});
-
-        vertexList.get(4).setAdjacencies(new Edge[]{ new Edge(vertexList.get(3), 51.402) });
-        vertexList.get(5).setAdjacencies(new Edge[]{ new Edge(vertexList.get(1), 14.2496) });
-        vertexList.get(6).setAdjacencies(new Edge[]{ new Edge(vertexList.get(2), 47.83)});
-        vertexList.get(7).setAdjacencies(new Edge[]{ new Edge(vertexList.get(3), 34.57) });
-
-
-        List<String> stringPathOutput = Dijkstra.getShortestPathFromTo("150WC1", "150EMRL", vertexList);
-        double distancePathOutput = Dijkstra.getDistanceShortestPathFromTo("150WC1", "150EMRL", vertexList);
-
-        String outputMess = "Distanza: " + distancePathOutput + " Percorso: ";
-
-        if (stringPathOutput != null)
-        {
-            for (int i = 0; i < stringPathOutput.size(); i++)
-                outputMess += (stringPathOutput.get(i) + "-");
-        }
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(outputMess).setCancelable(false).setTitle("Percorso").setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-
-            }
-        });
-
-        AlertDialog alertDialogMessage = builder.create();
-
-        alertDialogMessage.show();*/
-
-
-        //List<String> stringPathOutput;
+        // percorso minimo di output
         String[] stringPathArrayOutput;
 
         try
         {
-            Vertex[] vertexArray = new Vertex[hashMapsNodeIndex.keySet().size()];
-            List<Edge>[] edgeArray = new ArrayList[hashMapsNodeIndex.keySet().size()];
+            // si crea sia l'array dei nodi che degli archi con numero di elementi che dipende dalla dimensione del parametro lista di nodi
+            Vertex[] vertexArray = new Vertex[listNodeRoomNameOutput.size()];
+            List<Edge>[] edgeArray = new ArrayList[listNodeRoomNameOutput.size()];
 
-            Iterator iterator = hashMapsNodeIndex.entrySet().iterator();
-            int index = 0;
-
-            while (iterator.hasNext())
+            for (int i = 0; i < listNodeRoomNameOutput.size(); i++)
             {
-                Map.Entry pair = (Map.Entry) iterator.next();
-
-                vertexArray[index] = new Vertex(pair.getKey().toString());
-                index++;
+                vertexArray[i] = new Vertex(listNodeRoomNameOutput.get(i));
+                edgeArray[i] = new ArrayList<>();
             }
 
-            for (int i = 0; i < edgeArray.length; i++)
-                edgeArray[i] = new ArrayList<>();
-
+            // si aggiungono all'array degli archi tutti gli archi in avanti e all'indietro che presenta un nodo in base alla lista di input degli archi
             for (int i = 0; i < listRouteData.size(); i++)
             {
+                // si estraggono le informazioni dell'arco corrente
                 String currentNodeStart = listRouteData.get(i)[0];
                 String currentNodeEnd = listRouteData.get(i)[1];
 
@@ -288,20 +210,24 @@ public class Dijkstra {
 
                 int currentPLOS;
 
+                // meccanismo che permette di lasciare o rimuovere archi per il calcolo del percorso
                 if (currentPeople >= currentLOS)
                     currentPLOS = 1000;
                 else
                     currentPLOS = 0;
 
+                // calcolo del peso dell'arco
                 double currentEdgeWeight = currentPLOS + (currentPv * currentV) + (currentPr * currentR) + (currentPk * currentK) + (currentPl * currentL);
 
-                edgeArray[hashMapsNodeIndex.get(currentNodeStart)].add(new Edge(vertexArray[hashMapsNodeIndex.get(currentNodeEnd)], currentEdgeWeight));
-                edgeArray[hashMapsNodeIndex.get(currentNodeEnd)].add(new Edge(vertexArray[hashMapsNodeIndex.get(currentNodeStart)], currentEdgeWeight));
+                // inserimento dell'arco in avanti e all'indietro nell'array degli archi
+                edgeArray[listNodeRoomNameOutput.indexOf(currentNodeStart)].add(new Edge(vertexArray[listNodeRoomNameOutput.indexOf(currentNodeEnd)], currentEdgeWeight));
+                edgeArray[listNodeRoomNameOutput.indexOf(currentNodeEnd)].add(new Edge(vertexArray[listNodeRoomNameOutput.indexOf(currentNodeStart)], currentEdgeWeight));
             }
 
             for (int i = 0; i < vertexArray.length; i++)
                 vertexArray[i].setAdjacencies(edgeArray[i].toArray(new Edge[edgeArray[i].size()]));
 
+            // calcolo del percorso a costo minimo
             stringPathArrayOutput = Dijkstra.getShortestPathFromTo(sourceVertexName, targetVertexName, vertexArray);
 
         }

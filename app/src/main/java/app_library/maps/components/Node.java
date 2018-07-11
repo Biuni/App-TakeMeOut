@@ -1,50 +1,32 @@
 package app_library.maps.components;
 
 /**
- * Classe che identifica un beacon
+ * Classe che identifica una stanza con associato il relativo beacon
  */
 
 public class Node {
 
-    /*private int[] coords;
-    private String floor;
-
-    public Node(){
-
-    }
-
-    public Node(int[] crds,String fl){
-
-        coords = crds;
-        floor = fl;
-    }
-
-
-    public int[] getCoords() {
-        return coords;
-    }
-
-    public String getFloor() {
-        return floor;
-    }*/
-
-
-
-
-
-
-
-
+    // codice della stanza
     private String roomCod;
+
+    // mac adress beacon
     private String beaconId;
+
+    // coordinate della stanza in cui nella posizione 0 vi è la x e nella posizione 1 la y
     private int[] coords;
+
+    // piano della stanza
     private String altitude;
+
+    // larghezza
     private double width;
 
+    // costruttore vuoto
     public Node(){
 
     }
 
+    // costruttore non vuoto
     public Node(String roomCod, String beaconId, int[] coords, String altitude, double width){
 
         this.roomCod = roomCod;

@@ -6,8 +6,13 @@ package app_library.user;
 
 public class UserProfile {
 
+    // mail dell'utente
     String mail;
+
+    // nome e cognome utente
     String nameSurname;
+
+    // uuid dell'utente
     String uuid;
 
     //classe costruttore di un'istanza di un profilo di un utente
@@ -18,10 +23,7 @@ public class UserProfile {
         this.uuid = uuid;
     }
 
-    /**
-     * getters
-     *
-     */
+
     public String getMail() {
         return mail;
     }

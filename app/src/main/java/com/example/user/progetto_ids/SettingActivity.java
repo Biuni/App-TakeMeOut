@@ -7,20 +7,16 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,12 +37,16 @@ import app_library.validation.FormControl;
  * Created by User on 22/06/2018.
  */
 
+// activity per settare le impostazioni dell'app
 public class SettingActivity  extends AppCompatActivity {
 
+    // costanti per il ritorno della modalità in cui si trova l'utente alla chiusura delle impostazioni ovvero offline loggato, offline non loggato, online loggato e online non loggato
     public static final String RETURN_STATE_OFFLINE_LOGGED = "Offline_logged_OK";
     public static final String RETURN_STATE_OFFLINE_NOT_LOGGED = "Offline_nologged_OK";
     public static final String RETURN_STATE_ONLINE_LOGGED = "Online_logged_OK";
     public static final String RETURN_STATE_ONLINE_NOT_LOGGED = "Online_nologged_OK";
+
+    // elementi grafici
     private CheckBox checkBoxOffline;
     private TextView textViewIP;
     private EditText editTextIP;
@@ -63,18 +63,22 @@ public class SettingActivity  extends AppCompatActivity {
 
         setContentView(R.layout.activity_setting);
 
+        // impostazione del titolo dell'activity
         getSupportActionBar().setTitle("Impostazioni");
 
+        // recupero riferimenti elementi grafici
         checkBoxOffline = (CheckBox) findViewById(R.id.checkBoxSettingOffline);
         textViewIP = (TextView) findViewById(R.id.textViewSettingIPServer);
         editTextIP = (EditText) findViewById(R.id.editTextSettingIPServer);
         buttonSaveEdit = (Button) findViewById(R.id.buttonSettingSaveEdit);
         buttonBluetoothPerm = (Button) findViewById(R.id.buttonSettingBluetoothPerm);
 
+        // evento che si attiva alla pressione della checkBox per la modalità offline
         checkBoxOffline.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
 
+                // se è stata selezionata si disabilita l'elemento grafico per inserire l'indirizzo ip del server
                 if (b)
                 {
                     textViewIP.setEnabled(false);
@@ -90,6 +94,7 @@ public class SettingActivity  extends AppCompatActivity {
         });
 
 
+        // evento che si attiva alla pressione del pulsante salva modifiche
         buttonSaveEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -101,12 +106,14 @@ public class SettingActivity  extends AppCompatActivity {
                     builderOffline.setTitle("Offline");
                     builderOffline.setCancelable(false);
 
+                    // ho localmente nella memoria dell'app i dati sui nodi e archi
                     if(CSVHandler.csvContainsElements(CSVHandler.getFiles().get(CSVHandler.FILE_NODE)) && CSVHandler.csvContainsElements(CSVHandler.getFiles().get(CSVHandler.FILE_ROUTE)))
                     {
                         //creata struttura dati legata ai nodi dell'edificio, leggendo dal file salvato in memoria intera
                         ArrayList<String[]> nodeList = CSVHandler.readCSV(CSVHandler.FILE_NODE, getBaseContext());
                         MainApplication.loadNode(nodeList);
 
+                        // si imposta la modalità offline
                         MainApplication.setOnlineMode(false);
 
                         builderOffline.setMessage("Hai tutte le informazioni necessarie per utilizzare la modalità offline");
@@ -119,8 +126,10 @@ public class SettingActivity  extends AppCompatActivity {
 
                                 String returnString;
 
+                                // se l'utente è loggato si ritorna lo stato offline loggato
                                 if (UserHandler.isLogged())
                                     returnString = RETURN_STATE_OFFLINE_LOGGED;
+                                // si ritorna lo stato offline non loggato
                                 else
                                     returnString = RETURN_STATE_OFFLINE_NOT_LOGGED;
 
@@ -131,6 +140,7 @@ public class SettingActivity  extends AppCompatActivity {
                             }
                         });
                     }
+                    // se non ho localmente nella memoria dell'app i dati sui nodi e archi devo accedere prima online
                     else
                     {
                         builderOffline.setMessage("Non hai le informazioni necessarie per utilizzare la modalità offline. Accedi prima online per scaricare le mappe necessarie");
@@ -156,16 +166,22 @@ public class SettingActivity  extends AppCompatActivity {
                     builderOnline.setCancelable(false);
                     String ipInserted = editTextIP.getText().toString();
 
+                    // l'indirizzo ip è scritto correttamente
                     if (FormControl.ipControl(ipInserted))
                     {
+                        // la comunicazione con il server ha successo
                         if (ServerComunication.handShake(ipInserted))
                         {
+                            // si imposta l'indirizzo ip inserito
                             ServerComunication.setHostMaster(ipInserted);
 
+                            // si ottengono i dati dei nodi e archi aggiornati dal server
                             String serverJSONDataResponse = ServerComunication.getJSONData();
 
+                            // dati ricevuti con successo
                             if (!serverJSONDataResponse.equals(""))
                             {
+                                // creazione strutture necessarie per i nodi e archi con i dati ricevuti dal server
                                 HashMap<String,String>[] hashMapsNode = null;
                                 HashMap<String,String>[] hashMapsRoute = null;
 
@@ -188,15 +204,18 @@ public class SettingActivity  extends AppCompatActivity {
                                     hashMapsRoute = null;
                                 }
 
+                                // create le strutture con successo
                                 if (hashMapsNode != null && hashMapsRoute != null)
                                 {
                                     boolean updatedCSVCompleted = false;
 
                                     try
                                     {
+                                        // aggiornamento dei csv per i nodi e archi nella memoria interna dell'app
                                         CSVHandler.updateCSV(hashMapsNode, getBaseContext(), CSVHandler.FILE_NODE);
                                         CSVHandler.updateCSV(hashMapsRoute, getBaseContext(), CSVHandler.FILE_ROUTE);
 
+                                        // il csv è sovrascritto presentando elementi
                                         if (CSVHandler.csvContainsElements(CSVHandler.getFiles().get(CSVHandler.FILE_NODE)) && CSVHandler.csvContainsElements(CSVHandler.getFiles().get(CSVHandler.FILE_ROUTE)))
                                             updatedCSVCompleted = true;
                                         else
@@ -209,12 +228,14 @@ public class SettingActivity  extends AppCompatActivity {
                                     } catch (Exception e) {
                                     }
 
+                                    // il csv è stato sovrascritto correttamente
                                     if (updatedCSVCompleted)
                                     {
                                         //creata struttura dati legata ai nodi dell'edificio, leggendo dal file salvato in memoria intera
                                         ArrayList<String[]> nodeList = CSVHandler.readCSV(CSVHandler.FILE_NODE, getBaseContext());
                                         MainApplication.loadNode(nodeList);
 
+                                        // si imposta la modalità online
                                         MainApplication.setOnlineMode(true);
 
                                         builderOnline.setMessage("La comunicazione con il server è avvenuta con successo e sono state scaricate le mappe aggiornate");
@@ -227,8 +248,10 @@ public class SettingActivity  extends AppCompatActivity {
 
                                                 String returnString;
 
+                                                // se l'utente è loggato si ritorna lo stato online loggato
                                                 if (UserHandler.isLogged())
                                                     returnString = RETURN_STATE_ONLINE_LOGGED;
+                                                // se l'utente non è loggato si ritorna lo stato online non loggato
                                                 else
                                                     returnString = RETURN_STATE_ONLINE_NOT_LOGGED;
 
@@ -312,14 +335,17 @@ public class SettingActivity  extends AppCompatActivity {
         });
 
 
+        // evento che si attiva alla pressione della pulsante per la richiesta dei permessi necessari per il bluetooth
         buttonBluetoothPerm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
+                // richiesta dei permessi per il bluetooth
                 requestPermissionLocationForBluetooth();
             }
         });
 
+        // in base alla versione di android sul dispositivo si stabilisce se abilitare o meno il pulsante per la richiesta dei permessi necessari per il bluetooth
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
         {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
@@ -331,6 +357,7 @@ public class SettingActivity  extends AppCompatActivity {
             buttonBluetoothPerm.setEnabled(false);
 
 
+        // all'apertura delle impostazioni si rimpostano gli elemnti allo stesso stato della chiusura precedente
         if (MainApplication.getOnlineMode())
         {
             checkBoxOffline.setChecked(false);
@@ -341,19 +368,29 @@ public class SettingActivity  extends AppCompatActivity {
         else
             checkBoxOffline.setChecked(true);
 
-        MainApplication.setCurrentActivity(this);
-
+        // inizializzazione struttura file csv nodi e archi se non è stato già fatto
         if (CSVHandler.getFiles() == null)
             CSVHandler.createCSV(this);
     }
 
+    protected void onStart() {
+        super.onStart();
+
+        // si imposta l'activity corrente
+        MainApplication.setCurrentActivity(this);
+    }
+
     protected void onResume() {
         super.onResume();
+
+        // activity visibile
         MainApplication.setVisible(true);
     }
 
     protected void onPause() {
         super.onPause();
+
+        // activity non visibile
         MainApplication.setVisible(false);
     }
 
@@ -364,6 +401,7 @@ public class SettingActivity  extends AppCompatActivity {
      */
     private void requestPermissionLocationForBluetooth() {
 
+        // non ho il permesso della localizzazione e lo richiedo
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             Log.i("activate","activate location");
@@ -374,12 +412,14 @@ public class SettingActivity  extends AppCompatActivity {
             Toast.makeText(this, "Hai già i permessi richiesti per utilizzare il bluetooth", Toast.LENGTH_LONG).show();
     }
 
+    // metodo che gestisce gli eventi da attivare al ritorno della richiesta dei permessi della localizzazione
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
         switch (requestCode) {
             case PERMISSIONS_REQUEST_LOCATION_FOR_BLUETOOTH: {
 
+                // se il permesso è stato ottenuto disabilito il button per la richiesta
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
                     Log.i("prova","guaranteed");

@@ -6,6 +6,7 @@ package app_library.utility;
  */
 
 public abstract class StateMachine {
+
         //stato attuale in cui si trova
     protected int currentState;
         //stato immediatamente precedente

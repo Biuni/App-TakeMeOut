@@ -100,6 +100,7 @@ public class BeaconService {
         lastSampleTime = time;
     }
 
+    // stampa dei valori sul log
     public void printValue() {
         Log.i("VALUE",id + " value: " + value + " timestamp: " + lastSampleTime.toString());
     }

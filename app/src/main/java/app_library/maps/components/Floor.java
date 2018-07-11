@@ -5,93 +5,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-/**
- * Classe che definisce un piano che ha come proprietà un insieme di:
- * - stanze/aule (rooms)
- * - nodi/beacons (nodes)
- * Viene identificata da un nome
- */
 
+// Classe che definisce un piano che ha come proprietà un insieme di stanze o nodi:
 public class Floor {
 
-    /*private HashMap<String,Room> rooms;
-    private HashMap<String,Node> nodes;
+    // nome del piano
     private String floorName;
 
-    public Floor(String s){
-        floorName = s;
-        rooms = new HashMap<>();
-        nodes = new HashMap<>();
-    }
-
-    public HashMap<String,Room> getRooms() {
-        return rooms;
-    }
-
-    public HashMap<String, Node> getNodes() {
-        return nodes;
-    }
-
-    public void addNode(String cod, Node n){
-        nodes.put(cod,n);
-    }
-
-    public void deleteNode(int idNode){
-
-    }
-
-    public void addNotification(Notify n){
-
-    }
-
-    public void deleteNotification(String n){
-
-    }
-
-    public void addRoom(String name,Room r) {
-        rooms.put(name,r);
-    }
-
-
-    metodo che costruisce un arraylist di stringhe che contiente tutti i nomi delle aule
-    public ArrayList<String> nameStringRoom() {
-        ArrayList<String> s = new ArrayList();
-        Iterator it = rooms.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry) it.next();
-            s.add(pair.getKey().toString());
-        }
-        return s;
-    }
-
-    metodo che costruisce un arraylist di stringhe che contiente tutti i nomi dei beacon
-    public ArrayList<String> nameStringNode() {
-        ArrayList<String> s = new ArrayList();
-        Iterator it = nodes.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry) it.next();
-            s.add(pair.getKey().toString());
-        }
-        return s;
-    }
-
-    public String getFloorName() {
-        return floorName;
-    }*/
-
-
-
-
-
-
-
-
-
-    private String floorName;
-
-    // roomCod-Node
+    // hasmap nodi con chiave roomCod ovvero il codice della stanza e valore l'oggetto nodo
     private HashMap<String,Node> nodes;
 
+    // costruttore del piano
     public Floor(String floorName){
 
         this.floorName = floorName;
@@ -106,9 +30,10 @@ public class Floor {
         nodes.put(roomCod, n);
     }
 
-    // metodo che costruisce una lista di array di stringhe che contiente tutti i codici delle stanze all'elemento 0 e del beacon associato all'elemento 1
+    // metodo che costruisce una lista di array di stringhe che contiente tutti i codici delle stanze all'elemento 0 e del beacon associato all'elemento 1 riferiti al piano
     public ArrayList<String[]> getListNameRoomAndBeacon() {
 
+        // lista di ouput
         ArrayList<String[]> result = new ArrayList<>();
 
         Iterator iterator = nodes.entrySet().iterator();
@@ -127,13 +52,15 @@ public class Floor {
         return result;
     }
 
-    // metodo che costruisce una lista di stringhe che contiente o tutti i codici delle stanze o dei beacon a seconda del parametro booleano
+    // metodo che costruisce una lista di stringhe che contiente o tutti i codici delle stanze (booleano vero) o dei beacon (booleano falso) riferiti al piano a seconda del parametro
     public ArrayList<String> getListNameRoomOrBeacon(boolean roomName) {
 
+        // lista di ouput con o i nomi delle stanze o dei beacon
         ArrayList<String[]> listRoomOrBeacon = getListNameRoomAndBeacon();
         ArrayList<String> result = new ArrayList<>();
         int index;
 
+        // se è vero si imposta l'indice a 0 per le stanze altrimenti a 1 per i beacon
         if (roomName)
             index = 0;
         else
