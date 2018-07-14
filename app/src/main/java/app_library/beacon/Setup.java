@@ -13,13 +13,15 @@ public class Setup {
     public static final String emergencyCondition = "EMERGENCY";
     public static final String searchCondition = "SEARCHING";
 
-        //durate degli scan per ogni possibile setup
-    public static final long scanPeriodNormal = 3000l;
+    //durate degli scan per ogni possibile setup
+    //public static final long scanPeriodNormal = 3000l;
+    public static final long scanPeriodNormal = 2000l;
     public static final long scanPeriodSearching = 1500l;
     public static final long scanPeriodEmergency = 1000l;
 
-        //durate della pausa fra due scan consecutivi per ogni possibile setup
-    public static final long periodBetweenScanNormal = 15000l;
+    //durate della pausa fra due scan consecutivi per ogni possibile setup
+    //public static final long periodBetweenScanNormal = 15000l;
+    public static final long periodBetweenScanNormal = 8000l;
     public static final long periodBetweenScanSearching = 5000l;
     public static final long periodBetweenScanEmergency = 3000l;
 

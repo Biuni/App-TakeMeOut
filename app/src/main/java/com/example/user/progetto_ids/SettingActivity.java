@@ -385,6 +385,9 @@ public class SettingActivity  extends AppCompatActivity {
 
         // activity visibile
         MainApplication.setVisible(true);
+
+        // se nella riapertura dell'app è stata lanciata una notifica di emergenza si apre l'activity della mappa
+        MainApplication.openMapActivityEmergencyNotification();
     }
 
     protected void onPause() {

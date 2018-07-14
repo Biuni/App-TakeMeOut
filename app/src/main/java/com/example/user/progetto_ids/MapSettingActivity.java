@@ -61,7 +61,7 @@ public class MapSettingActivity  extends AppCompatActivity {
     private ArrayList<String> floorsNameKey;
 
     //identificativo del messaggio che si può ricevere
-    private static final String STARTMAPS = "STARTMAPS";
+    //private static final String STARTMAPS = "STARTMAPS";
 
     //messaggio impacchettato nell'intent per passare informazioni alla creazione della mappa a pieno schermo
     private String mapExtraInformationDestination;
@@ -101,11 +101,11 @@ public class MapSettingActivity  extends AppCompatActivity {
         MainApplication.setCurrentActivity(this);
 
         //inizializzato filtro per i messaggi
-        IntentFilter intentFilter = new IntentFilter();
+        /*IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(STARTMAPS);
 
         //registrato il receiver nell'activity
-        getBaseContext().registerReceiver(broadcastReceiver,intentFilter);
+        getBaseContext().registerReceiver(broadcastReceiver,intentFilter);*/
     }
 
     protected void onResume() {
@@ -114,6 +114,9 @@ public class MapSettingActivity  extends AppCompatActivity {
 
         // activity visibile
         MainApplication.setVisible(true);
+
+        // se nella riapertura dell'app è stata lanciata una notifica di emergenza si apre l'activity della mappa
+        MainApplication.openMapActivityEmergencyNotification();
     }
 
 
@@ -123,7 +126,7 @@ public class MapSettingActivity  extends AppCompatActivity {
         // activity non visibile
         MainApplication.setVisible(false);
 
-        try {
+        /*try {
             //cancellata la registrazione del receiver
             if(broadcastReceiver != null)
                 getBaseContext().unregisterReceiver(broadcastReceiver);
@@ -131,7 +134,7 @@ public class MapSettingActivity  extends AppCompatActivity {
         catch (IllegalArgumentException e)
         {
 
-        }
+        }*/
     }
 
 
@@ -335,11 +338,13 @@ public class MapSettingActivity  extends AppCompatActivity {
                 if (openMap)
                 {
                     // se la posizione corrente viene acquisita automaticamente con il bluetooth si lancia l'evento per sospendere la scansione che aprirà la mappa a pieno schermo
-                    if(currPosFloor == null)
+                    /*if(currPosFloor == null)
                         getApplicationContext().sendBroadcast(new Intent("SuspendScan"));
                     // si apre la mappa a pieno schermo
                     else
-                        startActivityMap();
+                        startActivityMap();*/
+
+                    startActivityMap();
                 }
             }
         });
@@ -378,7 +383,7 @@ public class MapSettingActivity  extends AppCompatActivity {
     }
 
     //il broadcast receiver deputato alla ricezione dei messaggi
-    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+    /*private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -391,6 +396,6 @@ public class MapSettingActivity  extends AppCompatActivity {
                 startActivityMap();
             }
         }
-    };
+    };*/
 
 }

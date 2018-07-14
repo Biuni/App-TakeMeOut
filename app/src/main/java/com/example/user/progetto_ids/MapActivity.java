@@ -54,7 +54,7 @@ public class MapActivity  extends AppCompatActivity implements DataListener {
     private boolean menuItemChangeFloorDisabled;
 
     //flag per permettere di capire quando ci si trova in uno stato di emergenza e l'app viene messa in background
-    private boolean backgroundEmergency;
+    //private boolean backgroundEmergency;
 
     // immagini bitmap degli elemnti sulla mappa
     private Bitmap bitmapUserCurrentPosition;
@@ -62,7 +62,7 @@ public class MapActivity  extends AppCompatActivity implements DataListener {
     private Bitmap bitmapNode;
 
     // costante per uscire dalla mappa a pieno schermo
-    private static final String EXIT_MAPS = "EXIT_MAPS";
+    //private static final String EXIT_MAPS = "EXIT_MAPS";
 
     // percorso costituito da un insieme di nodi da seguire sulla mappa
     private String[] nodePathStartEndArray;
@@ -84,10 +84,23 @@ public class MapActivity  extends AppCompatActivity implements DataListener {
         // impostazione del titolo dell'activity
         getSupportActionBar().setTitle("Mappa");
 
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inDither = true;
+        options.inScaled = false;
+        //options.inSampleSize = 2;
+        options.inPreferredConfig = Bitmap.Config.RGB_565;
+
         //Carico le differenti immagini da visualizzare sulla mappa
-        bitmapUserCurrentPosition = BitmapFactory.decodeResource(getResources(), R.drawable.map_user_pos);
+        /*bitmapUserCurrentPosition = BitmapFactory.decodeResource(getResources(), R.drawable.map_user_pos);
         bitmapDestination = BitmapFactory.decodeResource(getResources(), R.drawable.map_dest_pos);
-        bitmapNode = BitmapFactory.decodeResource(getResources(), R.drawable.map_node_pos);
+        bitmapNode = BitmapFactory.decodeResource(getResources(), R.drawable.map_node_pos);*/
+
+        bitmapUserCurrentPosition = BitmapFactory.decodeResource(getResources(), R.drawable.map_user_pos, options);
+        bitmapDestination = BitmapFactory.decodeResource(getResources(), R.drawable.map_dest_pos, options);
+        bitmapNode = BitmapFactory.decodeResource(getResources(), R.drawable.map_node_pos, options);
+
+
 
         // elementi per il settaggio dello zoom
         touchImageViewMapImage = new TouchImageView(this);
@@ -122,11 +135,11 @@ public class MapActivity  extends AppCompatActivity implements DataListener {
             }
 
             // si inizializza lo scanner dei beacon a emergenza
-            if(MainApplication.getEmergency())
+            /*if(MainApplication.getEmergency())
                 MainApplication.initializeScanner(this,"EMERGENCY");
             // si inizializza lo scanner dei beacon a ricerca
             else
-                MainApplication.initializeScanner(this,"SEARCHING");
+                MainApplication.initializeScanner(this,"SEARCHING");*/
 
         }
         // non posso recuperare automaticamente con il bluetooth le informazioni
@@ -190,16 +203,16 @@ public class MapActivity  extends AppCompatActivity implements DataListener {
         MainApplication.setCurrentActivity(this);
 
         //inizializzato filtro per i messaggi
-        IntentFilter intentFilter = new IntentFilter();
+        /*IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(EXIT_MAPS);
 
         backgroundEmergency = false;
 
+        // registrato il receiver nell'activity
+        getBaseContext().registerReceiver(broadcastReceiver,intentFilter);*/
+
         // recupero dei dati della mappa
         retrive();
-
-        // registrato il receiver nell'activity
-        getBaseContext().registerReceiver(broadcastReceiver,intentFilter);
     }
 
     protected void onResume() {
@@ -219,7 +232,7 @@ public class MapActivity  extends AppCompatActivity implements DataListener {
     protected void onStop() {
         super.onStop();
 
-        try {
+        /*try {
 
             // si controlla se rimuovere la registrazione del receiver nell'activity
             if(!MainApplication.getEmergency() && broadcastReceiver != null)
@@ -231,7 +244,7 @@ public class MapActivity  extends AppCompatActivity implements DataListener {
         catch (IllegalArgumentException e)
         {
 
-        }
+        }*/
 
     }
 
@@ -246,7 +259,9 @@ public class MapActivity  extends AppCompatActivity implements DataListener {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inDither = true;
         options.inScaled = false;
-        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        //options.inSampleSize = 2;
+        //options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        options.inPreferredConfig = Bitmap.Config.RGB_565;
 
         // pennello per il disegno del percorso
         Paint paint = new Paint();
@@ -255,7 +270,9 @@ public class MapActivity  extends AppCompatActivity implements DataListener {
         paint.setStrokeWidth(6);
 
         // bitmap modificabile su cui mettere gli elementi
-        Bitmap editableBitmap = Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(), identifierIdMap, options)).copy(Bitmap.Config.ARGB_8888, true);
+        //Bitmap editableBitmap = Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(), identifierIdMap, options)).copy(Bitmap.Config.ARGB_8888, true);
+        Bitmap editableBitmap = Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(), identifierIdMap, options)).copy(Bitmap.Config.RGB_565, true);
+
         Canvas canvas = new Canvas(editableBitmap);
 
         // si filtra del percorso da seguire solamente i nodi del piano corrente
@@ -563,11 +580,14 @@ public class MapActivity  extends AppCompatActivity implements DataListener {
         if (MainApplication.getEmergency())
             MainApplication.setEmergency(false);
 
-        // se posso recuperare automaticamente con il bluetooth le informazioni sul piano e la stanza correnti allora disabilito lo scan
-        if (MainApplication.controlBluetooth() && intentExtras.getString("map_info_curr_pos", "").equals(""))
-            MainApplication.getScanner().suspendScan();
+        if (MainApplication.getNotificationEnabled())
+            MainApplication.setNotificationEnabled(false);
 
-        try {
+        /*try {
+            // se posso recuperare automaticamente con il bluetooth le informazioni sul piano e la stanza correnti allora disabilito lo scan
+            if (MainApplication.controlBluetooth() && intentExtras.getString("map_info_curr_pos", "").equals(""))
+                MainApplication.getScanner().suspendScan();
+
             // si rimuove la registrazione del receiver nell'activity
             if (broadcastReceiver != null)
                 getBaseContext().unregisterReceiver(broadcastReceiver);
@@ -575,13 +595,13 @@ public class MapActivity  extends AppCompatActivity implements DataListener {
         catch (IllegalArgumentException e)
         {
 
-        }
+        }*/
 
         finish();
     }
 
     //il broadcast receiver deputato alla ricezione dei messaggi
-    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+    /*private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -608,5 +628,5 @@ public class MapActivity  extends AppCompatActivity implements DataListener {
                 finish();
             }
         }
-    };
+    };*/
 }

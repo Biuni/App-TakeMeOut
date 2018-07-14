@@ -54,7 +54,7 @@ public class UserHandler {
             String stringBeaconId = "no_data";
 
             // risposta del server
-            String serverResponse = "";
+            //String serverResponse = "";
 
             // se l'informazione del mac adress del beacon è presente si acquisisce
             if(MainApplication.getScanner().getCurrentBeacon() != null)
@@ -64,13 +64,14 @@ public class UserHandler {
             if(MainApplication.getOnlineMode() && isLogged())
             {
                 // invio richiesta posizione al server
-                serverResponse = ServerComunication.sendUserPositionWithData(getUuid(), stringBeaconId, "no_data");
+                //serverResponse = ServerComunication.sendUserPositionWithData(getUuid(), stringBeaconId, "no_data");
+                ServerComunication.sendUserPositionWithData(getUuid(), stringBeaconId, "no_data");
                 Log.i("user-beacon", "" + getUuid() + "-" + stringBeaconId);
             }
 
             // si controlla se nella risposta del server viene indicata se è presente un'emergenza
             // è presente un'emergenza
-            if (serverResponse.equals("OK_emergency"))
+            /*if (serverResponse.equals("OK_emergency"))
             {
                 // si controlla se il bluetooth è attivo e ci sono informazioni sulla posizione corrente dell'utente
                 if (MainApplication.controlBluetooth() && Data.getUserPosition().getFloor() != null)
@@ -83,9 +84,11 @@ public class UserHandler {
                             MainApplication.setEmergency(true);
                         else
                             MainApplication.launchNotification();
+
+
                     }
                 }
-            }
+            }*/
 
         }
         catch (Exception e)
@@ -135,18 +138,21 @@ public class UserHandler {
     public static void logout() {
 
         // risposta del server
-        String serverResponse = "";
+        //String serverResponse = "";
 
         // se l'utente è online e loggato si cancellano le proprie informazioni sulla posizione
+        /*if(MainApplication.getOnlineMode() && isLogged())
+            serverResponse = ServerComunication.deleteUserPositionWithData(getUuid());*/
+
         if(MainApplication.getOnlineMode() && isLogged())
-            serverResponse = ServerComunication.deleteUserPositionWithData(getUuid());
+            ServerComunication.deleteUserPositionWithData(getUuid());
 
         mail = null;
 
         // si cancellano le preferenze con le informazioni dell'utente
         cleanUserEditor();
 
-        try
+        /*try
         {
             // è presente un'emergenza
             if (serverResponse.equals("OK_emergency"))
@@ -169,7 +175,7 @@ public class UserHandler {
         catch (Exception e)
         {
 
-        }
+        }*/
     }
 
     /**

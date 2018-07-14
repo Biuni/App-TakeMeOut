@@ -207,13 +207,14 @@ public class BeaconConnection extends StateMachine {
                 break;
             case(8):
 
-                String serverResponse = "";
+                //String serverResponse = "";
 
                 //impacchettato il messaggio ed eventualmente viene inviato al server
                 if(MainApplication.getOnlineMode() && UserHandler.isLogged()) {
 
                     String mex = packingMessage();
-                    serverResponse = ServerComunication.sendUserPositionWithData(UserHandler.getUuid(), device.getAddress(), mex);
+                    //serverResponse = ServerComunication.sendUserPositionWithData(UserHandler.getUuid(), device.getAddress(), mex);
+                    ServerComunication.sendUserPositionWithData(UserHandler.getUuid(), device.getAddress(), mex);
                 }
 
                 timer.removeCallbacks(runnable);
@@ -222,7 +223,7 @@ public class BeaconConnection extends StateMachine {
                 BConnGattLeService.closeConnection();
                 activity.getBaseContext().sendBroadcast(new Intent("ScanPhaseFinished"));
 
-                try
+                /*try
                 {
                     if (serverResponse.equals("OK_emergency"))
                     {
@@ -241,7 +242,7 @@ public class BeaconConnection extends StateMachine {
                 catch (Exception e)
                 {
 
-                }
+                }*/
 
                 break;
 

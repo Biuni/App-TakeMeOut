@@ -7,6 +7,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -28,6 +33,8 @@ import android.widget.Toast;
 
 import app_library.MainApplication;
 import app_library.comunication.ServerComunication;
+import app_library.maps.grid.TouchImageView;
+import app_library.sharedstorage.Data;
 import app_library.user.UserHandler;
 
 /**
@@ -203,6 +210,9 @@ public class HomeActivity  extends AppCompatActivity {
 
         // activity visibile
         MainApplication.setVisible(true);
+
+        // se nella riapertura dell'app è stata lanciata una notifica di emergenza si apre l'activity della mappa
+        MainApplication.openMapActivityEmergencyNotification();
     }
 
     protected void onPause() {
@@ -235,13 +245,13 @@ public class HomeActivity  extends AppCompatActivity {
                     try
                     {
                         // l'applicazione si prepara per essere spenta
-                        MainApplication.setIsFinishing(true);
+                        //MainApplication.setIsFinishing(true);
 
                         // cancellazione posizione utente nel server
                         if(MainApplication.getOnlineMode() && UserHandler.isLogged())
                             ServerComunication.deleteUserPositionWithData(UserHandler.getUuid());
 
-                        if (MainApplication.controlBluetooth())
+                        if (MainApplication.controlBluetooth() && Data.getUserPosition().getFloor() != null)
                         {
                             HomeActivity.this.sendBroadcast(new Intent("SuspendScan"));
 

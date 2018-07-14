@@ -16,6 +16,8 @@ import android.os.Handler;
 import android.os.ParcelUuid;
 import android.util.Log;
 
+import com.example.user.progetto_ids.MapActivity;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -436,7 +438,14 @@ public class BeaconScanner extends StateMachine implements DataListener {
      * Metodo che cancella la registrazione del broadcast receiver
      */
     public void closeScan() {
-        if(broadcastReceiver!=null) activity.getBaseContext().unregisterReceiver(broadcastReceiver);
+
+        try {
+            if(broadcastReceiver!=null) activity.getBaseContext().unregisterReceiver(broadcastReceiver);
+        }
+        catch (IllegalArgumentException e)
+        {
+
+        }
     }
 
         //callback utilizzata per trovare dispositivi nel raggio d'azione
@@ -540,10 +549,28 @@ public class BeaconScanner extends StateMachine implements DataListener {
                         if (!MainApplication.getEmergency())
                         {
                             // se l'applicazione è in primo piano si imposta il booleano per l'emergenza a vero per aprire la mappa a pieno schermo altrimenti si invia una notifica nel dispositivo
-                            if(MainApplication.getVisible())
+                            /*if(MainApplication.getVisible())
                                 MainApplication.setEmergency(true);
                             else
+                                MainApplication.launchNotification();*/
+
+
+                            // imposto il booleano dell'emergenza
+                            MainApplication.setEmergency(true);
+
+                            // l'applicazione è in primo piano e si apre la mappa
+                            if(MainApplication.getVisible())
+                            {
+                                Intent intentMap = new Intent (activity.getBaseContext(), MapActivity.class);
+                                activity.getBaseContext().startActivity(intentMap);
+                            }
+                            // l'applicazione non è in primo piano e si invia una notifica nel dispositivo
+                            else
+                            {
+                                MainApplication.setNotificationEnabled(true);
                                 MainApplication.launchNotification();
+                            }
+
                         }
                     }
                 }

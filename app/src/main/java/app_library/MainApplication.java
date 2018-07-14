@@ -7,14 +7,18 @@ import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
 
 import com.example.user.progetto_ids.MapActivity;
 import com.example.user.progetto_ids.R;
+import com.example.user.progetto_ids.SettingActivity;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -64,8 +68,10 @@ public class MainApplication {
     private static boolean onlineMode = true;
 
         //flag che indica quando l'applicazione sta per essere chiusa (passando dal backbutton)
-    private static boolean isFinishing;
+    //private static boolean isFinishing;
 
+    // booleano che indica se se una notifica è stata lanciata sul dispositivo
+    private static boolean notificationEnabled = false;
 
     /**
      * Metodo che inizializza i parametri legati all'applicazione
@@ -93,7 +99,7 @@ public class MainApplication {
         if(MainApplication.getOnlineMode() && UserHandler.isLogged())
             UserHandler.initializePosition();
 
-        isFinishing = false;
+        //isFinishing = false;
     }
     /**
      * Metodo per impostare la modalità di funzionamento dell'applicazione
@@ -142,16 +148,24 @@ public class MainApplication {
     public static boolean getVisible() {
         return visible;
     }
-    /**
 
+    // metodo che restituisce se una notifica è stata lanciata sul dispositivo
+    public static boolean getNotificationEnabled () {
+        return notificationEnabled;
+    }
+
+    // metodo per impostare che è stata lanciata una notifica sul dispositivo
+    public static void setNotificationEnabled(boolean b) {
+        notificationEnabled = b;
+    }
 
     /**
      * Metodo imposta l'attributo isFinishing, che indica se l'applicazione sta per essere chiusa
      * @param b, booleano che indica se l'applicazione sta per essere chiusa o meno
      */
-    public static void setIsFinishing(boolean b) {
+    /*public static void setIsFinishing(boolean b) {
         isFinishing = b;
-    }
+    }*/
 
 
     /**
@@ -183,7 +197,7 @@ public class MainApplication {
     public static void setEmergency(boolean e) {
         emergency = e;
         Log.i("emergency","emergency: " + emergency);
-        scanner.suspendScan();
+        //scanner.suspendScan();
     }
 
     /**
@@ -283,7 +297,7 @@ public class MainApplication {
         if(intent.getAction().equals("TerminatedScan")) {
 
             // l'applicazione si prepara ad essere chiusa
-            if (isFinishing)
+            /*if (isFinishing)
             {
                 try {
                     if(broadcastReceiver!=null) activity.unregisterReceiver(broadcastReceiver);
@@ -335,6 +349,24 @@ public class MainApplication {
                         initializeScanner(activity);
                     }
                 }
+            }*/
+
+
+            // l'applicazione si prepara ad essere chiusa
+            try {
+                if(broadcastReceiver!=null) activity.unregisterReceiver(broadcastReceiver);
+
+                scanner.closeScan();
+                scanner = null;
+                activity.finish();
+            }
+            catch (IllegalArgumentException e)
+            {
+                activity.finish();
+            }
+            catch (Exception e)
+            {
+                activity.finish();
             }
 
         }
@@ -373,7 +405,7 @@ public class MainApplication {
         //creazione della notifica vera e propria
         Notification n  = new Notification.Builder(activity)
                 .setContentTitle("TakeMeOut")
-                .setContentText("C'è un'emergenza")
+                .setContentText("Ritorna nell'app che c'è un'emergenza")
                 .setSmallIcon(R.drawable.takemeout_notification)
                 .setLargeIcon(BitmapFactory.decodeResource(activity.getResources(), R.drawable.takemeout_notification))
                 .setContentIntent(pIntent)
@@ -398,6 +430,32 @@ public class MainApplication {
     public static void activateBluetooth () {
         Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
         activity.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+    }
+
+
+    // metodo che apre l'activity della mappa se è stata lanciata una notifica di emergenza sul dispositivo
+    public static void openMapActivityEmergencyNotification()
+    {
+        // la notifica è stata lanciata e apro la dialog che dice all'utente che verra aperta la mappa
+        if (notificationEnabled)
+        {
+            AlertDialog.Builder builderEmergNotif = new AlertDialog.Builder(activity);
+            builderEmergNotif.setTitle("Emergenza");
+            builderEmergNotif.setCancelable(false);
+            builderEmergNotif.setMessage("Si sta verificando un'emergenza quindi verra aperta la mappa per guidarti alla posizione sicura");
+            builderEmergNotif.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+
+                    dialogInterface.dismiss();
+                    Intent intentMap = new Intent (activity, MapActivity.class);
+                    activity.startActivity(intentMap);
+                }
+            });
+
+            AlertDialog alertDialogEmergNotif = builderEmergNotif.create();
+            alertDialogEmergNotif.show();
+        }
     }
 
 }
