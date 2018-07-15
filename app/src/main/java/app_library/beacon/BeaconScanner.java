@@ -562,6 +562,7 @@ public class BeaconScanner extends StateMachine implements DataListener {
                             if(MainApplication.getVisible())
                             {
                                 Intent intentMap = new Intent (activity.getBaseContext(), MapActivity.class);
+                                intentMap.putExtra("map_info_curr_pos", "");
                                 activity.getBaseContext().startActivity(intentMap);
                             }
                             // l'applicazione non è in primo piano e si invia una notifica nel dispositivo

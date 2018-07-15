@@ -449,6 +449,7 @@ public class MainApplication {
 
                     dialogInterface.dismiss();
                     Intent intentMap = new Intent (activity, MapActivity.class);
+                    intentMap.putExtra("map_info_curr_pos", "");
                     activity.startActivity(intentMap);
                 }
             });

@@ -10,6 +10,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -85,21 +87,20 @@ public class MapActivity  extends AppCompatActivity implements DataListener {
         getSupportActionBar().setTitle("Mappa");
 
 
-        BitmapFactory.Options options = new BitmapFactory.Options();
+        /*BitmapFactory.Options options = new BitmapFactory.Options();
         options.inDither = true;
         options.inScaled = false;
         //options.inSampleSize = 2;
-        options.inPreferredConfig = Bitmap.Config.RGB_565;
+        options.inPreferredConfig = Bitmap.Config.RGB_565;*/
 
         //Carico le differenti immagini da visualizzare sulla mappa
-        /*bitmapUserCurrentPosition = BitmapFactory.decodeResource(getResources(), R.drawable.map_user_pos);
+        bitmapUserCurrentPosition = BitmapFactory.decodeResource(getResources(), R.drawable.map_user_pos);
         bitmapDestination = BitmapFactory.decodeResource(getResources(), R.drawable.map_dest_pos);
-        bitmapNode = BitmapFactory.decodeResource(getResources(), R.drawable.map_node_pos);*/
+        bitmapNode = BitmapFactory.decodeResource(getResources(), R.drawable.map_node_pos);
 
-        bitmapUserCurrentPosition = BitmapFactory.decodeResource(getResources(), R.drawable.map_user_pos, options);
+        /*bitmapUserCurrentPosition = BitmapFactory.decodeResource(getResources(), R.drawable.map_user_pos, options);
         bitmapDestination = BitmapFactory.decodeResource(getResources(), R.drawable.map_dest_pos, options);
-        bitmapNode = BitmapFactory.decodeResource(getResources(), R.drawable.map_node_pos, options);
-
+        bitmapNode = BitmapFactory.decodeResource(getResources(), R.drawable.map_node_pos, options);*/
 
 
         // elementi per il settaggio dello zoom
@@ -211,6 +212,7 @@ public class MapActivity  extends AppCompatActivity implements DataListener {
         // registrato il receiver nell'activity
         getBaseContext().registerReceiver(broadcastReceiver,intentFilter);*/
 
+
         // recupero dei dati della mappa
         retrive();
     }
@@ -260,8 +262,9 @@ public class MapActivity  extends AppCompatActivity implements DataListener {
         options.inDither = true;
         options.inScaled = false;
         //options.inSampleSize = 2;
-        //options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        options.inPreferredConfig = Bitmap.Config.RGB_565;
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        //options.inPreferredConfig = Bitmap.Config.RGB_565;
+        //options.inPurgeable = true;
 
         // pennello per il disegno del percorso
         Paint paint = new Paint();
@@ -270,10 +273,12 @@ public class MapActivity  extends AppCompatActivity implements DataListener {
         paint.setStrokeWidth(6);
 
         // bitmap modificabile su cui mettere gli elementi
-        //Bitmap editableBitmap = Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(), identifierIdMap, options)).copy(Bitmap.Config.ARGB_8888, true);
-        Bitmap editableBitmap = Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(), identifierIdMap, options)).copy(Bitmap.Config.RGB_565, true);
+        Bitmap editableBitmap = Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(), identifierIdMap, options)).copy(Bitmap.Config.ARGB_8888, true);
+        //Bitmap editableBitmap = Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(), identifierIdMap, options)).copy(Bitmap.Config.RGB_565, true);
+
 
         Canvas canvas = new Canvas(editableBitmap);
+
 
         // si filtra del percorso da seguire solamente i nodi del piano corrente
         ArrayList<String> listRoomPathCurrentFloor = new ArrayList<>();
@@ -284,8 +289,9 @@ public class MapActivity  extends AppCompatActivity implements DataListener {
                 listRoomPathCurrentFloor.add(nodePathStartEndArray[i]);
         }
 
-        // bluetooth non attivo o emergenza e condividono il fatto di avere un percorso sorgente-destinazione già stabilito per il piano
-        if (!MainApplication.controlBluetooth() || MainApplication.getEmergency())
+        // bluetooth non attivo con i beacon o emergenza e condividono il fatto di avere un percorso sorgente-destinazione già stabilito per il piano
+        //if (!MainApplication.controlBluetooth() || MainApplication.getEmergency())
+        if (!intentExtras.getString("map_info_curr_pos", "").equals("") || MainApplication.getEmergency())
         {
             // sono recuperate le coordinate x e y della stanza coorente
             int[] currentUserCoords = MainApplication.getFloors().get(userCurrentFloor).getNodes().get(userCurrentRoom).getCoords();
@@ -476,6 +482,11 @@ public class MapActivity  extends AppCompatActivity implements DataListener {
                 setContentView(touchImageViewMapImage);
             }
         });
+
+
+        /*touchImageViewMapImage.setMapOnDrawInfo(destinationFloor, userCurrentFloor, userCurrentRoom, nodePathStartEndArray, mapResId);
+        touchImageViewMapImage.invalidate();
+        setContentView(touchImageViewMapImage);*/
     }
 
     // creazione del menu
